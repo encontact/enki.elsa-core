@@ -42,11 +42,14 @@ namespace Elsa.Persistence.EntityFrameworkCore.CustomSchema
             }
         }
 
-        public override long GetServiceProviderHashCode() => 0;
+        public override int GetServiceProviderHashCode() => 0;
 
         public override void PopulateDebugInfo([NotNull] IDictionary<string, string> debugInfo)
         {
             debugInfo["CustomSchemaExtensionInfo"] = true.ToString();
         }
+
+        public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo other) 
+            => other is CustomSchemaOptionsExtensionInfo;
     }
 }

@@ -14,6 +14,7 @@ namespace Elsa.Services
 
         public AutoMapperMapper(IEnumerable<MappingProfile> profiles)
         {
+            // Solving Issue: https://github.com/AutoMapper/AutoMapper/issues/3988
             var configuration = new MapperConfiguration(
                 x =>
                 {

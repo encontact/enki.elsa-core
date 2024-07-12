@@ -10,7 +10,10 @@ namespace Elsa.Persistence.EntityFrameworkCore.CustomSchema
         {
         }
 
-        public object Create(DbContext context)
+        // designTime parameter was ignored in this implementation 
+        // after EF lib upgrade.
+        // To More: https://learn.microsoft.com/en-us/dotnet/api/microsoft.entityframeworkcore.infrastructure.imodelcachekeyfactory?view=efcore-8.0
+        public object Create(DbContext context, bool designTime)
         {
             string schema = null;
             if (context is ElsaContext)

@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <RootNamespace>Elsa</RootNamespace>
         <LangVersion>latest</LangVersion>
-        <PackageVersion>1.0.0</PackageVersion>
+        <PackageVersion>1.6.0</PackageVersion>
         <Authors>Elsa Contributors</Authors>
         <Description>
             Elsa is a set of workflow libraries and tools that enable super-fast workflowing capabilities in any .NET Core application.
-            This package provides abstractions and models that are used by Elsa.Core and other related packages. You don't need to reference this package separately if you reference any other Elsa package. 
+            This package provides abstractions and models that are used by Elsa.Core and other related packages. You don't need to reference this package separately if you reference any other Elsa package.
         </Description>
         <Copyright>2019</Copyright>
         <PackageProjectUrl>https://github.com/elsa-workflows/elsa-core</PackageProjectUrl>
@@ -26,10 +26,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="AutoMapper" Version="10.1.1" />
-      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="3.1.9" />
-      <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="3.1.9" />
-      <PackageReference Include="Microsoft.Extensions.Primitives" Version="3.1.9" />
+      <PackageReference Include="AutoMapper" Version="13.0.1" />
+      <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Localization.Abstractions" Version="8.0.0" />
+      <PackageReference Include="Microsoft.Extensions.Primitives" Version="8.0.0" />
       <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
       <PackageReference Include="NodaTime" Version="3.0.3" />
       <PackageReference Include="NodaTime.Serialization.JsonNet" Version="3.0.0" />

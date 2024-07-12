@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.0</TargetFramework>
-        <PackageVersion>1.0.0</PackageVersion>
+        <TargetFramework>net8.0</TargetFramework>
+        <PackageVersion>1.6.0</PackageVersion>
         <LangVersion>latest</LangVersion>
         <Authors>Elsa Contributors</Authors>
         <Description>
