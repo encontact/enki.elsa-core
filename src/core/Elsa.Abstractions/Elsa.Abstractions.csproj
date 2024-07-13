@@ -16,6 +16,7 @@
         <RepositoryType>GitHub</RepositoryType>
         <PackageTags>elsa, workflows</PackageTags>
         <PackageIcon>icon.png</PackageIcon>
+        <PackageId>Enki.Elsa.Abstractions</PackageId>
     </PropertyGroup>
 
     <ItemGroup>

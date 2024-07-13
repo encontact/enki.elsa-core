@@ -18,6 +18,7 @@
         <RepositoryType>GitHub</RepositoryType>
         <PackageTags>elsa, workflows</PackageTags>
         <PackageIcon>icon.png</PackageIcon>
+        <PackageId>Enki.Elsa.Activities.MassTransit</PackageId>
     </PropertyGroup>
 
     <ItemGroup>

@@ -15,6 +15,7 @@
         <RepositoryType>GitHub</RepositoryType>
         <PackageTags>elsa, workflows, javascript, jint</PackageTags>
         <PackageIcon>icon.png</PackageIcon>
+        <PackageId>Enki.Elsa.Scripting.JavaScript</PackageId>
     </PropertyGroup>
 
     <ItemGroup>

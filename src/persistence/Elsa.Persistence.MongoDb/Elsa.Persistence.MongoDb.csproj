@@ -15,6 +15,7 @@
         <RepositoryType>GitHub</RepositoryType>
         <PackageTags>elsa, workflows, mongodb</PackageTags>
         <PackageIcon>icon.png</PackageIcon>
+        <PackageId>Enki.Elsa.Persistence.MongoDb</PackageId>
     </PropertyGroup>
 
     <ItemGroup>

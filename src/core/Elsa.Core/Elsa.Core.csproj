@@ -18,6 +18,7 @@
         <PackageTags>elsa, workflows, orchard</PackageTags>
         <PackageIcon>icon.png</PackageIcon>
         <Nullable>enable</Nullable>
+        <PackageId>Enki.Elsa.Core</PackageId>
     </PropertyGroup>
 
     <ItemGroup>
