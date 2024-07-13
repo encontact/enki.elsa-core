@@ -2,7 +2,7 @@
 # On windows, use NMake: https://docs.microsoft.com/pt-br/cpp/build/reference/nmake-reference?view=msvc-160
 dotnetFramework = net8.0
 solution = ./Elsa.sln
-BUILD_VERSION = 1.6.0
+BUILD_VERSION = 1.6.1
 # libProject = ./WorkTime/WorkTime.csproj
 # nuspec = ./enki.worktime.nuspec
 # distPath = ./dist

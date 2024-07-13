@@ -2,7 +2,6 @@
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
-        <PackageVersion>1.6.0</PackageVersion>
         <LangVersion>latest</LangVersion>
         <Authors>Elsa Contributors</Authors>
         <Description>
