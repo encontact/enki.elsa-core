@@ -15,6 +15,7 @@
         <RepositoryType>GitHub</RepositoryType>
         <PackageTags>elsa, workflows, entity framework core</PackageTags>
         <PackageIcon>icon.png</PackageIcon>
+        <PackageId>Enki.Elsa.Persistence.EntityFrameworkCore</PackageId>
     </PropertyGroup>
 
     <ItemGroup>

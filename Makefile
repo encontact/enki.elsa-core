@@ -7,7 +7,7 @@ BUILD_VERSION = 1.6.0
 # nuspec = ./enki.worktime.nuspec
 # distPath = ./dist
 artifactDir = ./artifacts
-nupkgFile = $(shell find ./artifacts -type f -name '*.nupkg')
+nupkgFile = $(shell find ./artifacts -type f -name 'Enki*.nupkg')
 
 show-pack:
 	echo "${nupkgFile}"
