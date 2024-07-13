@@ -35,7 +35,7 @@ pack:
 	dotnet pack ${solution} -o ${artifactDir} -c Release --include-symbols /p:Version="${BUILD_VERSION}"
 
 push-pack:
-	dotnet nuget push ${nupkgFile} --api-key ${NUGET_API} --source https://api.nuget.org/v3/index.json
+	dotnet nuget push ${nupkgFile} --api-key ${NUGET_API} --source https://api.nuget.org/v3/index.json --skip-duplicate
 
 # Mais em: https://renatogroffe.medium.com/net-nuget-atualizando-packages-via-linha-de-comando-b0c6b596ed2
 # Para instalar dependência: dotnet tool install --global dotnet-outdated-tool
