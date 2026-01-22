@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Elsa.Messages;
@@ -59,6 +59,11 @@ namespace Elsa.Persistence
         private Task PublishUpdateEventAsync(CancellationToken cancellationToken)
         {
             return mediator.Publish(new WorkflowDefinitionStoreUpdated(), cancellationToken);
+        }
+
+        public Task<WorkflowDefinitionVersion> GetByIdReadOnlyAsync(string id, VersionOptions version, CancellationToken cancellationToken = default)
+        {
+            return decoratedStore.GetByIdReadOnlyAsync(id, version, cancellationToken);
         }
     }
 }

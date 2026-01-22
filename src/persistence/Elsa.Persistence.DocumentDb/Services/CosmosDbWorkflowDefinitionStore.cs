@@ -40,6 +40,12 @@ namespace Elsa.Persistence.DocumentDb.Services
             });
             return Map(document);
         }
+
+        public Task<WorkflowDefinitionVersion> GetByIdReadOnlyAsync(string id, VersionOptions version, CancellationToken cancellationToken = default)
+        {
+            throw new System.NotImplementedException();
+        }
+
         public async Task<IEnumerable<WorkflowDefinitionVersion>> ListAsync(VersionOptions version, CancellationToken cancellationToken = default)
         {
             var documents = await cosmosDbStoreHelper.ListAsync(q => q.WithVersion(version), cancellationToken);

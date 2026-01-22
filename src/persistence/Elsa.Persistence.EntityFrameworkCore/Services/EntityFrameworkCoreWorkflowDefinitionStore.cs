@@ -55,9 +55,9 @@ namespace Elsa.Persistence.EntityFrameworkCore.Services
 
             DeleteActivities(entity);
             DeleteConnections(entity);
-            
+
             entity = mapper.Map(definition, entity);
-            
+
             dbContext.WorkflowDefinitionVersions.Update(entity);
 
             await dbContext.SaveChangesAsync(cancellationToken);
@@ -79,7 +79,27 @@ namespace Elsa.Persistence.EntityFrameworkCore.Services
                 .WithVersion(version);
 
             var entity = await query.FirstOrDefaultAsync(cancellationToken);
-            
+
+            return Map(entity);
+        }
+
+        public async Task<WorkflowDefinitionVersion> GetByIdReadOnlyAsync(
+            string id,
+            VersionOptions version,
+            CancellationToken cancellationToken = default)
+        {
+            var query = dbContext
+                .WorkflowDefinitionVersions
+                .AsSplitQuery()
+                .AsNoTracking()
+                .Include(x => x.Activities)
+                .Include(x => x.Connections)
+                .AsQueryable()
+                .Where(x => x.DefinitionId == id)
+                .WithVersion(version);
+
+            var entity = await query.FirstOrDefaultAsync(cancellationToken);
+
             return Map(entity);
         }
 
@@ -136,13 +156,13 @@ namespace Elsa.Persistence.EntityFrameworkCore.Services
 
             return definitionRecords.Count;
         }
-        
+
         private void DeleteActivities(WorkflowDefinitionVersionEntity entity)
         {
             dbContext.ActivityDefinitions.RemoveRange(entity.Activities);
             entity.Activities.Clear();
         }
-        
+
         private void DeleteConnections(WorkflowDefinitionVersionEntity entity)
         {
             dbContext.ConnectionDefinitions.RemoveRange(entity.Connections);

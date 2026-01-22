@@ -111,5 +111,10 @@ namespace Elsa.Persistence.YesSql.Services
             await session.CommitAsync();
             return definitionDocuments.Count;
         }
+
+        public Task<WorkflowDefinitionVersion> GetByIdReadOnlyAsync(string id, VersionOptions version, CancellationToken cancellationToken = default)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
