@@ -63,7 +63,7 @@ namespace Elsa.Persistence
 
         public Task<WorkflowDefinitionVersion> GetByIdReadOnlyAsync(string id, VersionOptions version, CancellationToken cancellationToken = default)
         {
-            throw new System.NotImplementedException();
+            return decoratedStore.GetByIdReadOnlyAsync(id, version, cancellationToken);
         }
     }
 }
