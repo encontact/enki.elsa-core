@@ -72,6 +72,24 @@ namespace Elsa.Persistence.EntityFrameworkCore.Services
         {
             var query = dbContext
                 .WorkflowDefinitionVersions
+                .Include(x => x.Activities)
+                .Include(x => x.Connections)
+                .AsQueryable()
+                .Where(x => x.DefinitionId == id)
+                .WithVersion(version);
+
+            var entity = await query.FirstOrDefaultAsync(cancellationToken);
+
+            return Map(entity);
+        }
+
+        public async Task<WorkflowDefinitionVersion> GetByIdReadOnlyAsync(
+            string id,
+            VersionOptions version,
+            CancellationToken cancellationToken = default)
+        {
+            var query = dbContext
+                .WorkflowDefinitionVersions
                 .AsSplitQuery()
                 .AsNoTracking()
                 .Include(x => x.Activities)
@@ -91,8 +109,6 @@ namespace Elsa.Persistence.EntityFrameworkCore.Services
         {
             var query = dbContext
                 .WorkflowDefinitionVersions
-                .AsSplitQuery()
-                .AsNoTracking()
                 .Include(x => x.Activities)
                 .Include(x => x.Connections)
                 .AsQueryable()

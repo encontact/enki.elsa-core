@@ -82,5 +82,10 @@ namespace Elsa.Persistence.MongoDb.Services
 
             return (int) result.DeletedCount;
         }
+
+        public Task<WorkflowDefinitionVersion> GetByIdReadOnlyAsync(string id, VersionOptions version, CancellationToken cancellationToken = default)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
