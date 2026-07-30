@@ -2,10 +2,6 @@
 # On windows, use NMake: https://docs.microsoft.com/pt-br/cpp/build/reference/nmake-reference?view=msvc-160
 dotnetFramework = net8.0
 solution = ./Elsa.sln
-BUILD_VERSION = 1.6.2
-# libProject = ./WorkTime/WorkTime.csproj
-# nuspec = ./enki.worktime.nuspec
-# distPath = ./dist
 artifactDir = ./artifacts
 nupkgFile = $(shell find ./artifacts -type f -name 'Enki*.nupkg')
 
@@ -32,7 +28,7 @@ build:
 # 	dotnet publish ${apiProject} --runtime any -c Release -f ${dotnetFramework} --no-self-contained -o ${distPath}
 
 pack:
-	dotnet pack ${solution} -o ${artifactDir} -c Release --include-symbols /p:Version="${BUILD_VERSION}"
+	dotnet pack ${solution} -o ${artifactDir} -c Release --include-symbols
 
 push-pack:
 	dotnet nuget push ${nupkgFile} --api-key ${NUGET_API} --source https://api.nuget.org/v3/index.json --skip-duplicate
@@ -55,3 +51,6 @@ check-vulnerabilities:
 # # Mesmo após gerar a Tag é necessário enviar a tag para o servidor
 # tag-release:
 # 	nbgv tag
+
+set-version:
+	powershell -NoProfile -ExecutionPolicy Bypass -File scripts/set-version.ps1 -Version "$(VERSION)"

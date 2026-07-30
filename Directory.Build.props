@@ -1,0 +1,12 @@
+<Project>
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Authors>Elsa Contributors</Authors>
+        <Copyright>2019</Copyright>
+        <PackageProjectUrl>https://github.com/elsa-workflows/elsa-core</PackageProjectUrl>
+        <RepositoryUrl>https://github.com/elsa-workflows/elsa-core</RepositoryUrl>
+        <RepositoryType>GitHub</RepositoryType>
+        <PackageIcon>icon.png</PackageIcon>
+        <Version>1.6.3</Version>
+    </PropertyGroup>
+</Project>
