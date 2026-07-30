@@ -15,7 +15,6 @@
         <PackageTags>elsa, workflows</PackageTags>
         <PackageIcon>icon.png</PackageIcon>
         <PackageId>Enki.Elsa</PackageId>
-        <Version>1.6.3</Version>
     </PropertyGroup>
 
     <ItemGroup>
