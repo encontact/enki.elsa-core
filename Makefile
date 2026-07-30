@@ -20,7 +20,7 @@ clean:
 	dotnet clean ${solution}
 
 restore:
-	dotnet restore ./Elsa.sln
+	dotnet restore ${solution}
 
 build:
 	dotnet build -c Release ${solution}
@@ -32,7 +32,7 @@ build:
 # 	dotnet publish ${apiProject} --runtime any -c Release -f ${dotnetFramework} --no-self-contained -o ${distPath}
 
 pack:
-	dotnet pack ./Elsa.sln -o ./artifacts -c Release --include-symbols /p:Version="${BUILD_VERSION}"
+	dotnet pack ${solution} -o ${artifactDir} -c Release --include-symbols /p:Version="${BUILD_VERSION}"
 
 push-pack:
 	dotnet nuget push ${nupkgFile} --api-key ${NUGET_API} --source https://api.nuget.org/v3/index.json --skip-duplicate
