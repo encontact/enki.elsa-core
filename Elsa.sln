@@ -1,6 +1,7 @@
-﻿Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2036
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 18
+VisualStudioVersion = 18.5.11801.241 oobstable
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elsa.Core", "src\core\Elsa.Core\Elsa.Core.csproj", "{300EE2D5-54C5-46F2-AD03-BB43589EA074}"
 EndProject
@@ -8,13 +9,14 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{DA71CDAA-8DD
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "solution", "solution", "{7165BB9E-F22C-40D2-B7B1-CA3EFA2529A0}"
 	ProjectSection(SolutionItems) = preProject
+		.dockerignore = .dockerignore
 		.editorconfig = .editorconfig
 		.gitignore = .gitignore
-		Nuget.Config = Nuget.Config
-		README.md = README.md
-		.dockerignore = .dockerignore
 		docker-compose.yaml = docker-compose.yaml
 		Dockerfile = Dockerfile
+		Makefile = Makefile
+		Nuget.Config = Nuget.Config
+		README.md = README.md
 	EndProjectSection
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Elsa.Abstractions", "src\core\Elsa.Abstractions\Elsa.Abstractions.csproj", "{3130C574-557C-4DA2-933E-AED7A9EBE48A}"
@@ -68,6 +70,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elsa.Dashboard.Web", "src\dashboard\Elsa.Dashboard.Web\Elsa.Dashboard.Web.csproj", "{7179277B-E692-43CA-8243-3FE4FC2DD1EA}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Elsa.Activities.Reflection", "src\activities\Elsa.Activities.Reflection\Elsa.Activities.Reflection.csproj", "{1689E6C1-DD2B-4ECC-B9C8-E6A7E4E6AAA0}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{73A29819-DE9B-43FD-9339-DFBCC4A36146}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{96C7E5C0-9954-448C-8C9B-B419145B39A2}"
+	ProjectSection(SolutionItems) = preProject
+		nuget-publish.yml = nuget-publish.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -195,6 +204,7 @@ Global
 		{ED2A4FE5-821B-46F7-B72F-E66DE0D66C93} = {35F44BE9-13D0-417C-A01A-F0787BEE6DC3}
 		{7179277B-E692-43CA-8243-3FE4FC2DD1EA} = {8B87D79A-F0DE-4F88-81D3-8C8C69108ADB}
 		{1689E6C1-DD2B-4ECC-B9C8-E6A7E4E6AAA0} = {B43B546E-23F3-46E8-ACB7-D04F05CDA180}
+		{96C7E5C0-9954-448C-8C9B-B419145B39A2} = {73A29819-DE9B-43FD-9339-DFBCC4A36146}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8B0975FD-7050-48B0-88C5-48C33378E158}
