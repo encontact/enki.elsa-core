@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -24,17 +25,14 @@ namespace Elsa.Persistence.EntityFrameworkCore.Services
 
         public async Task<WorkflowDefinitionVersion> SaveAsync(WorkflowDefinitionVersion definition, CancellationToken cancellationToken = default)
         {
-            var existingEntity =
-                await dbContext
-                    .WorkflowDefinitionVersions
-                    .Include(x => x.Activities)
-                    .Include(x => x.Connections)
-                    .FirstOrDefaultAsync(x => x.VersionId == definition.Id, cancellationToken);
+            var existingEntity = await dbContext
+                .WorkflowDefinitionVersions
+                .FirstOrDefaultAsync(x => x.VersionId == definition.Id, cancellationToken);
 
             if (existingEntity == null)
                 return await AddAsync(definition, cancellationToken);
 
-            return await UpdateAsync(definition, cancellationToken);
+            return await UpdateAsync(existingEntity, definition, cancellationToken);
         }
 
         public async Task<WorkflowDefinitionVersion> AddAsync(WorkflowDefinitionVersion definition, CancellationToken cancellationToken = default)
@@ -45,22 +43,50 @@ namespace Elsa.Persistence.EntityFrameworkCore.Services
             return Map(entity);
         }
 
-        public async Task<WorkflowDefinitionVersion> UpdateAsync(WorkflowDefinitionVersion definition, CancellationToken cancellationToken)
+        public async Task<WorkflowDefinitionVersion> UpdateAsync(
+            WorkflowDefinitionVersion definition,
+            CancellationToken cancellationToken)
         {
             var entity = await dbContext
                 .WorkflowDefinitionVersions
-                .Include(x => x.Activities)
-                .Include(x => x.Connections)
                 .FirstOrDefaultAsync(x => x.VersionId == definition.Id, cancellationToken);
 
-            DeleteActivities(entity);
-            DeleteConnections(entity);
+            if (entity == null)
+                throw new InvalidOperationException(
+                    $"Workflow definition '{definition.Id}' was not found.");
 
-            entity = mapper.Map(definition, entity);
+            return await UpdateAsync(entity, definition, cancellationToken);
+        }
 
-            dbContext.WorkflowDefinitionVersions.Update(entity);
+        private async Task<WorkflowDefinitionVersion> UpdateAsync(
+            WorkflowDefinitionVersionEntity entity,
+            WorkflowDefinitionVersion definition,
+            CancellationToken cancellationToken)
+        {
+            await using (var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken))
+            {
+                await dbContext.ActivityDefinitions
+                    .Where(x => x.WorkflowDefinitionVersion.VersionId == entity.VersionId)
+                    .ExecuteDeleteAsync(cancellationToken);
 
-            await dbContext.SaveChangesAsync(cancellationToken);
+                await dbContext.ConnectionDefinitions
+                    .Where(x => x.WorkflowDefinitionVersion.VersionId == entity.VersionId)
+                    .ExecuteDeleteAsync(cancellationToken);
+
+                dbContext.ChangeTracker.Clear();
+
+                entity = await dbContext.WorkflowDefinitionVersions
+                    .FirstAsync(x => x.VersionId == definition.Id, cancellationToken);
+
+                mapper.Map(definition, entity);
+
+                entity.Activities = mapper.Map<ICollection<ActivityDefinitionEntity>>(definition.Activities);
+                entity.Connections = mapper.Map<ICollection<ConnectionDefinitionEntity>>(definition.Connections);
+
+                await dbContext.SaveChangesAsync(cancellationToken);
+
+                await transaction.CommitAsync(cancellationToken);
+            }
 
             return Map(entity);
         }
@@ -72,6 +98,7 @@ namespace Elsa.Persistence.EntityFrameworkCore.Services
         {
             var query = dbContext
                 .WorkflowDefinitionVersions
+                .AsSplitQuery()
                 .Include(x => x.Activities)
                 .Include(x => x.Connections)
                 .AsQueryable()
@@ -155,18 +182,6 @@ namespace Elsa.Persistence.EntityFrameworkCore.Services
             await dbContext.SaveChangesAsync(cancellationToken);
 
             return definitionRecords.Count;
-        }
-
-        private void DeleteActivities(WorkflowDefinitionVersionEntity entity)
-        {
-            dbContext.ActivityDefinitions.RemoveRange(entity.Activities);
-            entity.Activities.Clear();
-        }
-
-        private void DeleteConnections(WorkflowDefinitionVersionEntity entity)
-        {
-            dbContext.ConnectionDefinitions.RemoveRange(entity.Connections);
-            entity.Connections.Clear();
         }
 
         private WorkflowDefinitionVersionEntity Map(WorkflowDefinitionVersion source) => mapper.Map<WorkflowDefinitionVersionEntity>(source);
