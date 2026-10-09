@@ -1,6 +1,6 @@
 # To learn makefiles: https://makefiletutorial.com/
 # On windows, use NMake: https://docs.microsoft.com/pt-br/cpp/build/reference/nmake-reference?view=msvc-160
-dotnetFramework = net8.0
+dotnetFramework = net10.0
 solution = ./Elsa.sln
 artifactDir = ./artifacts
 nupkgFile = $(shell find ./artifacts -type f -name 'Enki*.nupkg')
