@@ -2,6 +2,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Elsa.Scripting.Liquid.Extensions;
+using Elsa.Scripting.Liquid.Handlers;
 using Elsa.Scripting.Liquid.Messages;
 using Elsa.Services;
 using Elsa.Services.Models;
@@ -33,10 +34,9 @@ namespace Elsa.Scripting.Liquid.Services
 
         private async Task<TemplateContext> CreateTemplateContextAsync(WorkflowExecutionContext workflowContext, CancellationToken cancellationToken)
         {
-            var context = new TemplateContext();
+            var context = new TemplateContext(workflowContext, CommonLiquidContextHandler.Options);
             context.SetValue("WorkflowExecutionContext", workflowContext);
             await mediator.Publish(new EvaluatingLiquidExpression(context, workflowContext), cancellationToken);
-            context.Model = workflowContext;
             return context;
         }
     }

@@ -49,9 +49,9 @@ namespace Elsa.Scripting.JavaScript.Services
             var engine = new Engine(ConfigureJintEngine);
 
             await ConfigureEngineAsync(engine, workflowExecutionContext, cancellationToken);
-            engine.Execute(expression);
+            var result = engine.Evaluate(expression);
 
-            return ConvertValue(engine.GetCompletionValue(), type);
+            return ConvertValue(result, type);
         }
 
         private void ConfigureJintEngine(Jint.Options options)

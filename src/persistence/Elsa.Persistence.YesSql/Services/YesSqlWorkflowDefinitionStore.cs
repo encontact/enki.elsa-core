@@ -27,8 +27,8 @@ namespace Elsa.Persistence.YesSql.Services
             CancellationToken cancellationToken = default)
         {
             var document = mapper.Map<WorkflowDefinitionVersionDocument>(definition);
-            session.Save(document);
-            await session.CommitAsync();
+            await session.SaveAsync(document);
+            await session.SaveChangesAsync();
             return mapper.Map<WorkflowDefinitionVersion>(document);
         }
 
@@ -36,8 +36,8 @@ namespace Elsa.Persistence.YesSql.Services
         {
             var document = mapper.Map<WorkflowDefinitionVersionDocument>(definition);
 
-            session.Save(document);
-            await session.CommitAsync();
+            await session.SaveAsync(document);
+            await session.SaveChangesAsync();
             return mapper.Map<WorkflowDefinitionVersion>(document);
         }
 
@@ -79,8 +79,8 @@ namespace Elsa.Persistence.YesSql.Services
             var document = await query.FirstOrDefaultAsync();
 
             document = mapper.Map(definition, document);
-            session.Save(document);
-            await session.CommitAsync();
+            await session.SaveAsync(document);
+            await session.SaveChangesAsync();
 
             return mapper.Map<WorkflowDefinitionVersion>(document);
         }
@@ -108,7 +108,7 @@ namespace Elsa.Persistence.YesSql.Services
                 session.Delete(document);
             }
 
-            await session.CommitAsync();
+            await session.SaveChangesAsync();
             return definitionDocuments.Count;
         }
 

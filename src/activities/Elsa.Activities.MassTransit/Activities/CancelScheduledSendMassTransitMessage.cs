@@ -1,14 +1,12 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Elsa.Activities.MassTransit.Options;
 using Elsa.Attributes;
 using Elsa.Expressions;
 using Elsa.Results;
 using Elsa.Services;
 using Elsa.Services.Models;
 using MassTransit;
-using Microsoft.Extensions.Options;
 
 namespace Elsa.Activities.MassTransit.Activities
 {
@@ -20,13 +18,13 @@ namespace Elsa.Activities.MassTransit.Activities
     public class CancelScheduledMassTransitMessage : MassTransitBusActivity
     {
         private readonly IWorkflowExpressionEvaluator evaluator;
-        private readonly MessageScheduleOptions options;
+        private readonly IMessageScheduler messageScheduler;
 
-        public CancelScheduledMassTransitMessage(IWorkflowExpressionEvaluator evaluator, IBus bus, ConsumeContext consumeContext, IOptions<MessageScheduleOptions> options)
+        public CancelScheduledMassTransitMessage(IWorkflowExpressionEvaluator evaluator, IBus bus, ConsumeContext consumeContext, IMessageScheduler messageScheduler)
             : base(bus, consumeContext)
         {
             this.evaluator = evaluator;
-            this.options = options.Value;
+            this.messageScheduler = messageScheduler;
         }
 
         [ActivityProperty(Hint = "Expression that returns the tokenId of a scheduled message to cancel.")]
@@ -36,9 +34,25 @@ namespace Elsa.Activities.MassTransit.Activities
             set => SetState(value);
         }
 
+        // Per MassTransit's IMessageScheduler docs, CancelScheduledSend identifies the scheduled message by
+        // (EndpointAddress, TokenId) together, not by TokenId alone. This MUST be the exact EndpointAddress
+        // passed to ScheduleSendMassTransitMessage when the message was scheduled. We have not verified what
+        // MassTransit does on a mismatch (exception vs. silent no-op) - treat an unverified mismatch here as a
+        // risk that the original message still gets delivered as if nothing had been cancelled.
+        [ActivityProperty(Hint = "The same endpoint address that was used by the Schedule MassTransit Message activity to schedule this message.")]
+        public Uri EndpointAddress
+        {
+            get
+            {
+                var endpointAddress = GetState<string>();
+                return string.IsNullOrEmpty(endpointAddress) ? null : new Uri(endpointAddress);
+            }
+            set => SetState(value.ToString());
+        }
+
         protected override bool OnCanExecute(WorkflowExecutionContext context)
         {
-            return TokenId != null && options.SchedulerAddress != null;
+            return TokenId != null && EndpointAddress != null;
         }
 
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context,
@@ -46,9 +60,7 @@ namespace Elsa.Activities.MassTransit.Activities
         {
             var tokenId = (Guid)await evaluator.EvaluateAsync(TokenId, typeof(Guid), context, cancellationToken);
 
-            var endpoint = await SendEndpointProvider.GetSendEndpoint(options.SchedulerAddress);
-
-            await endpoint.CancelScheduledSend(tokenId);
+            await messageScheduler.CancelScheduledSend(EndpointAddress, tokenId, cancellationToken);
 
             return Done();
         }

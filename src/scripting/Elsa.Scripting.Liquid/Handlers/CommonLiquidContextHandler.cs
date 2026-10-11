@@ -16,33 +16,38 @@ namespace Elsa.Scripting.Liquid.Handlers
 {
     public class CommonLiquidContextHandler : INotificationHandler<EvaluatingLiquidExpression>
     {
+        internal static readonly TemplateOptions Options = new TemplateContext().Options;
+
         static CommonLiquidContextHandler()
         {
-            FluidValue.SetTypeMapping<ExpandoObject>(x => new ObjectValue(x));
-            FluidValue.SetTypeMapping<JObject>(o => new ObjectValue(o));
-            FluidValue.SetTypeMapping<JValue>(o => FluidValue.Create(o.Value));
+            // Fluid resolves these per-TemplateContext via an implicit, process-wide default
+            // TemplateOptions instance, so these converters must be registered exactly once.
+            Options.ValueConverters.Add(x => x is ExpandoObject expando ? new ObjectValue(expando) : null);
+            Options.ValueConverters.Add(x => x is JObject jObject ? new ObjectValue(jObject) : null);
+            Options.ValueConverters.Add(x => x is JValue jValue ? jValue.Value : null);
         }
 
         public Task Handle(EvaluatingLiquidExpression notification, CancellationToken cancellationToken)
         {
             var context = notification.TemplateContext;
+            var options = context.Options;
 
-            context.MemberAccessStrategy.Register<LiquidPropertyAccessor, FluidValue>((x, name) => x.GetValueAsync(name));
-            context.MemberAccessStrategy.Register<WorkflowExecutionContext, LiquidPropertyAccessor>("Input", x => new LiquidPropertyAccessor(name => ToFluidValue(x.Workflow.Input, name)));
-            context.MemberAccessStrategy.Register<WorkflowExecutionContext, LiquidPropertyAccessor>("Output", x => new LiquidPropertyAccessor(name => ToFluidValue(x.Workflow.Output, name)));
-            context.MemberAccessStrategy.Register<WorkflowExecutionContext, LiquidPropertyAccessor>("Variables", x => new LiquidPropertyAccessor(name => ToFluidValue(x.GetVariables(), name)));
-            context.MemberAccessStrategy.Register<WorkflowExecutionContext, LiquidPropertyAccessor>("TransientState", x => new LiquidPropertyAccessor(name => ToFluidValue(x.TransientState, name)));
-            context.MemberAccessStrategy.Register<WorkflowExecutionContext, LiquidObjectAccessor<IActivity>>("Activities", x => new LiquidObjectAccessor<IActivity>(name => GetActivityAsync(x, name)));
-            context.MemberAccessStrategy.Register<LiquidObjectAccessor<IActivity>, LiquidObjectAccessor<object>>((x, activityName) => new LiquidObjectAccessor<object>(outputKey => GetActivityOutput(x, activityName, outputKey)));
-            context.MemberAccessStrategy.Register<LiquidObjectAccessor<object>, object>((x, name) => x.GetValueAsync(name));
-            context.MemberAccessStrategy.Register<ExpandoObject, object>((x, name) => ((IDictionary<string, object>)x)[name]);
-            context.MemberAccessStrategy.Register<JObject, object>((source, name) => source[name]);
+            options.MemberAccessStrategy.Register<LiquidPropertyAccessor, FluidValue>((x, name) => x.GetValueAsync(name));
+            options.MemberAccessStrategy.Register<WorkflowExecutionContext, LiquidPropertyAccessor>("Input", x => new LiquidPropertyAccessor(name => ToFluidValue(x.Workflow.Input, name, options)));
+            options.MemberAccessStrategy.Register<WorkflowExecutionContext, LiquidPropertyAccessor>("Output", x => new LiquidPropertyAccessor(name => ToFluidValue(x.Workflow.Output, name, options)));
+            options.MemberAccessStrategy.Register<WorkflowExecutionContext, LiquidPropertyAccessor>("Variables", x => new LiquidPropertyAccessor(name => ToFluidValue(x.GetVariables(), name, options)));
+            options.MemberAccessStrategy.Register<WorkflowExecutionContext, LiquidPropertyAccessor>("TransientState", x => new LiquidPropertyAccessor(name => ToFluidValue(x.TransientState, name, options)));
+            options.MemberAccessStrategy.Register<WorkflowExecutionContext, LiquidObjectAccessor<IActivity>>("Activities", x => new LiquidObjectAccessor<IActivity>(name => GetActivityAsync(x, name)));
+            options.MemberAccessStrategy.Register<LiquidObjectAccessor<IActivity>, LiquidObjectAccessor<object>>((x, activityName) => new LiquidObjectAccessor<object>(outputKey => GetActivityOutput(x, activityName, outputKey)));
+            options.MemberAccessStrategy.Register<LiquidObjectAccessor<object>, object>((x, name) => x.GetValueAsync(name));
+            options.MemberAccessStrategy.Register<ExpandoObject, object>((x, name) => ((IDictionary<string, object>)x)[name]);
+            options.MemberAccessStrategy.Register<JObject, object>((source, name) => source[name]);
 
             return Task.CompletedTask;
         }
 
-        private Task<FluidValue> ToFluidValue(IDictionary<string, Variable> dictionary, string key) 
-            => Task.FromResult(!dictionary.TryGetValue(key, out var variable) ? default : FluidValue.Create(variable.Value));
+        private Task<FluidValue> ToFluidValue(IDictionary<string, Variable> dictionary, string key, TemplateOptions options)
+            => Task.FromResult(!dictionary.TryGetValue(key, out var variable) ? default : FluidValue.Create(variable.Value, options));
 
         private async Task<object> GetActivityOutput(LiquidObjectAccessor<IActivity> accessor, string activityName, string outputKey)
         {

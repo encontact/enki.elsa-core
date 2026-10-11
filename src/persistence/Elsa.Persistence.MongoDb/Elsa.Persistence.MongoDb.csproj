@@ -29,8 +29,8 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="MongoDb.Bson.NodaTime" Version="2.1.0" />
-      <PackageReference Include="MongoDB.Driver" Version="2.30.0" />
+      <PackageReference Include="MongoDb.Bson.NodaTime" Version="3.1.0" />
+      <PackageReference Include="MongoDB.Driver" Version="3.12.0" />
       <!-- Override transitivo: MongoDB.Driver.Core traz Snappier 1.0.0 (vulnerabilidade alta) -->
       <PackageReference Include="Snappier" Version="1.3.1" />
     </ItemGroup>

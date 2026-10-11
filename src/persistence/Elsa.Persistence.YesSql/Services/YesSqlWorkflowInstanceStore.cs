@@ -35,8 +35,8 @@ namespace Elsa.Persistence.YesSql.Services
                 ? mapper.Map(instance, existingInstance)
                 : mapper.Map<WorkflowInstanceDocument>(instance);
 
-            session.Save(document);
-            await session.CommitAsync();
+            await session.SaveAsync(document);
+            await session.SaveChangesAsync();
             return mapper.Map<WorkflowInstance>(document);
         }
 

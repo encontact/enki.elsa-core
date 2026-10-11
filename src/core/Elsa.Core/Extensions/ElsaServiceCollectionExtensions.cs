@@ -54,9 +54,11 @@ namespace Microsoft.Extensions.DependencyInjection
 
         private static IServiceCollection AddMediatR(this ElsaBuilder configuration)
         {
-            return configuration.Services.AddMediatR(
-                mediatr => mediatr.AsSingleton(), 
-                typeof(ElsaServiceCollectionExtensions));
+            return configuration.Services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssemblyContaining(typeof(ElsaServiceCollectionExtensions));
+                cfg.Lifetime = ServiceLifetime.Singleton;
+            });
         }
 
         private static ElsaBuilder AddWorkflowsCore(this ElsaBuilder configuration)

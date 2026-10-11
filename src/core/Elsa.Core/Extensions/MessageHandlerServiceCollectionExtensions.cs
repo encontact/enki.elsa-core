@@ -2,7 +2,6 @@
 using System.Linq;
 using System.Reflection;
 using MediatR;
-using MediatR.Registration;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Elsa.Extensions
@@ -18,8 +17,12 @@ namespace Elsa.Extensions
         
         public static IServiceCollection AddNotificationHandlers(this IServiceCollection services, params Type[] markerTypes)
         {
-            var assemblies = markerTypes.Select(x => x.GetTypeInfo().Assembly);
-            ServiceRegistrar.AddMediatRClasses(services, assemblies);
+            var assemblies = markerTypes.Select(x => x.GetTypeInfo().Assembly).ToArray();
+            services.AddMediatR(cfg =>
+            {
+                cfg.RegisterServicesFromAssemblies(assemblies);
+                cfg.Lifetime = ServiceLifetime.Singleton;
+            });
             return services;
         }
     }
