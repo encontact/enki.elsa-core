@@ -1,18 +1,20 @@
 ﻿using System.Collections.Generic;
 using AutoMapper;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 
 namespace Elsa.Services
 {
     /// <summary>
     /// A Mapper implementation that uses AutoMapper.
     /// Using a privately constructed AutoMapper.IMapper instance prevents collisions with other frameworks such as ABP.
-    /// See https://github.com/elsa-workflows/elsa-core/issues/290 
+    /// See https://github.com/elsa-workflows/elsa-core/issues/290
     /// </summary>
     public class AutoMapperMapper : IMapper
     {
         private readonly AutoMapper.IMapper mapper;
 
-        public AutoMapperMapper(IEnumerable<MappingProfile> profiles)
+        public AutoMapperMapper(IEnumerable<MappingProfile> profiles, ILoggerFactory? loggerFactory = null)
         {
             // Solving Issue: https://github.com/AutoMapper/AutoMapper/issues/3988
             var configuration = new MapperConfiguration(
@@ -20,7 +22,8 @@ namespace Elsa.Services
                 {
                     foreach (var profile in profiles)
                         x.AddProfile(profile);
-                }
+                },
+                loggerFactory ?? NullLoggerFactory.Instance
             );
 
             mapper = configuration.CreateMapper();
