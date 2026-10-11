@@ -1,8 +1,7 @@
-﻿using System;
+using System;
 using Elsa.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
-using Microsoft.Extensions.Logging;
 
 namespace Elsa.Extensions
 {
@@ -24,8 +23,7 @@ namespace Elsa.Extensions
         private static IMapper CreateMapper(IServiceProvider services)
         {
             var profiles = services.GetServices<MappingProfile>();
-            var loggerFactory = services.GetService<ILoggerFactory>();
-            return new AutoMapperMapper(profiles, loggerFactory);
+            return new ManualMapper(profiles);
         }
     }
 }

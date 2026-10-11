@@ -1,8 +1,7 @@
 using System.Linq;
-using AutoMapper;
 using Elsa.Mapping;
 using Elsa.Models;
-using Microsoft.Extensions.Logging.Abstractions;
+using Elsa.Services;
 using Newtonsoft.Json.Linq;
 using Xunit;
 
@@ -10,11 +9,7 @@ namespace Elsa.Core.Tests.Mapping
 {
     public class WorkflowDefinitionProfileTests
     {
-        private static AutoMapper.IMapper CreateMapper()
-        {
-            var configuration = new MapperConfiguration(cfg => cfg.AddProfile<WorkflowDefinitionProfile>(), NullLoggerFactory.Instance);
-            return configuration.CreateMapper();
-        }
+        private static IMapper CreateMapper() => new ManualMapper(new MappingProfile[] { new WorkflowDefinitionProfile() });
 
         [Fact]
         public void Map_WorkflowDefinitionVersionToItself_CopiesAllScalarFields()
@@ -48,9 +43,9 @@ namespace Elsa.Core.Tests.Mapping
         [Fact]
         public void Map_WorkflowDefinitionVersionToItself_CopiesActivitiesListButKeepsElementReferences()
         {
-            // WorkflowDefinitionProfile only maps WorkflowDefinitionVersion -> WorkflowDefinitionVersion; there is
-            // no CreateMap<ActivityDefinition, ActivityDefinition>, so AutoMapper's same-type convention passes
-            // each ActivityDefinition element through by reference. Only the containing list is a new instance.
+            // WorkflowDefinitionProfile.Clone() passes the Activities enumerable straight into the
+            // WorkflowDefinitionVersion constructor, which only materializes a new List via .ToList();
+            // it does not clone the ActivityDefinition elements themselves.
             var mapper = CreateMapper();
             var activity = new ActivityDefinition("activity-1", "Console", new JObject());
             var source = new WorkflowDefinitionVersion(

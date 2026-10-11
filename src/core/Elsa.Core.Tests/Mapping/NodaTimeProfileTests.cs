@@ -1,8 +1,6 @@
 using System;
-using AutoMapper;
 using Elsa.Mapping;
 using Elsa.Services;
-using Microsoft.Extensions.Logging.Abstractions;
 using NodaTime;
 using Xunit;
 
@@ -10,11 +8,7 @@ namespace Elsa.Core.Tests.Mapping
 {
     public class NodaTimeProfileTests
     {
-        private static AutoMapper.IMapper CreateMapper()
-        {
-            var configuration = new MapperConfiguration(cfg => cfg.AddProfile<NodaTimeProfile>(), NullLoggerFactory.Instance);
-            return configuration.CreateMapper();
-        }
+        private static IMapper CreateMapper() => new ManualMapper(new MappingProfile[] { new NodaTimeProfile() });
 
         [Fact]
         public void Map_InstantToDateTime_ReturnsEquivalentUtcDateTime()

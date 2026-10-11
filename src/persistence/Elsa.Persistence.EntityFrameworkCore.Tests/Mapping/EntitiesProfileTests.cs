@@ -1,46 +1,24 @@
 using System.Collections.Generic;
 using System.Linq;
-using AutoMapper;
 using Elsa.Mapping;
 using Elsa.Models;
 using Elsa.Persistence.EntityFrameworkCore.Entities;
 using Elsa.Persistence.EntityFrameworkCore.Mapping;
-using Microsoft.Extensions.Logging.Abstractions;
+using Elsa.Services;
 using NodaTime;
 using Xunit;
 
 namespace Elsa.Persistence.EntityFrameworkCore.Tests.Mapping
 {
     /// <summary>
-    /// Locks in the mapping behavior of <see cref="EntitiesProfile"/> across the AutoMapper version bump
-    /// (13.0.1 -> 16.2.0, see GHSA-rvv3-g6hj-g44x). The profiles here are combined exactly as
-    /// MapperServiceCollectionExtensions.CreateMapper does at runtime: every registered MappingProfile,
-    /// including NodaTimeProfile, in a single MapperConfiguration.
+    /// Locks in the mapping behavior of <see cref="EntitiesProfile"/> now that it is hand-written C# instead
+    /// of AutoMapper configuration (see GHSA-rvv3-g6hj-g44x for why AutoMapper was dropped). The profiles here
+    /// are combined exactly as MapperServiceCollectionExtensions.CreateMapper does at runtime: every registered
+    /// MappingProfile, including NodaTimeProfile, in a single ManualMapper.
     /// </summary>
     public class EntitiesProfileTests
     {
-        private static AutoMapper.IMapper CreateMapper()
-        {
-            var configuration = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile<EntitiesProfile>();
-                cfg.AddProfile<NodaTimeProfile>();
-            }, NullLoggerFactory.Instance);
-
-            return configuration.CreateMapper();
-        }
-
-        [Fact]
-        public void Configuration_WithAllRegisteredProfiles_IsValid()
-        {
-            var configuration = new MapperConfiguration(cfg =>
-            {
-                cfg.AddProfile<EntitiesProfile>();
-                cfg.AddProfile<NodaTimeProfile>();
-            }, NullLoggerFactory.Instance);
-
-            configuration.AssertConfigurationIsValid();
-        }
+        private static IMapper CreateMapper() => new ManualMapper(new MappingProfile[] { new EntitiesProfile(), new NodaTimeProfile() });
 
         [Fact]
         public void Map_WorkflowDefinitionVersionToEntity_MapsIdToVersionIdAndIgnoresEntityId()
@@ -94,6 +72,30 @@ namespace Elsa.Persistence.EntityFrameworkCore.Tests.Mapping
         }
 
         [Fact]
+        public void MapInto_WorkflowDefinitionVersionIntoExistingEntity_PreservesExistingEntityId()
+        {
+            var mapper = CreateMapper();
+            var existingEntity = new WorkflowDefinitionVersionEntity { Id = 42, VersionId = "stale-id" };
+            var source = new WorkflowDefinitionVersion(
+                id: "version-1",
+                definitionId: "definition-1",
+                version: 2,
+                name: "Workflow",
+                description: "desc",
+                activities: Enumerable.Empty<ActivityDefinition>(),
+                connections: Enumerable.Empty<ConnectionDefinition>(),
+                isSingleton: true,
+                isDisabled: false,
+                variables: new Variables());
+
+            var result = mapper.Map(source, existingEntity);
+
+            Assert.Same(existingEntity, result);
+            Assert.Equal(42, result.Id);
+            Assert.Equal("version-1", result.VersionId);
+        }
+
+        [Fact]
         public void Map_WorkflowInstanceToEntity_ConvertsActivitiesDictionaryToCollectionAndMapsId()
         {
             var mapper = CreateMapper();
@@ -143,6 +145,40 @@ namespace Elsa.Persistence.EntityFrameworkCore.Tests.Mapping
             Assert.Equal(Instant.FromUtc(2024, 3, 15, 10, 0, 0), model.CreatedAt);
             Assert.True(model.Activities.ContainsKey("activity-1"));
             Assert.Equal("Console", model.Activities["activity-1"].Type);
+        }
+
+        [Fact]
+        public void MapInto_WorkflowInstanceIntoExistingEntity_ReusesExistingTrackedCollections()
+        {
+            // EF Core's stores clear WorkflowInstanceEntity.Activities/BlockingActivities in place (so the
+            // change tracker still owns those exact List instances) and then call mapper.Map(instance, entity).
+            // The mapping must refill those same collections rather than replacing them with new ones.
+            var mapper = CreateMapper();
+            var existingEntity = new WorkflowInstanceEntity
+            {
+                Id = 5,
+                Activities = new List<ActivityInstanceEntity>(),
+                BlockingActivities = new List<BlockingActivityEntity>(),
+                ExecutionLog = new List<LogEntry>()
+            };
+            var originalActivities = existingEntity.Activities;
+            var originalBlockingActivities = existingEntity.BlockingActivities;
+
+            var source = new WorkflowInstance
+            {
+                Id = "instance-1",
+                Activities = new Dictionary<string, ActivityInstance> { ["a1"] = new ActivityInstance { Id = "a1", Type = "Console" } },
+                BlockingActivities = new HashSet<BlockingActivity> { new BlockingActivity("a1", "UserTask") }
+            };
+
+            var result = mapper.Map(source, existingEntity);
+
+            Assert.Same(existingEntity, result);
+            Assert.Equal(5, result.Id);
+            Assert.Same(originalActivities, result.Activities);
+            Assert.Same(originalBlockingActivities, result.BlockingActivities);
+            Assert.Single(result.Activities);
+            Assert.Single(result.BlockingActivities);
         }
 
         [Fact]
@@ -238,6 +274,21 @@ namespace Elsa.Persistence.EntityFrameworkCore.Tests.Mapping
             Assert.Equal(source.SourceActivityId, roundTripped.SourceActivityId);
             Assert.Equal(source.DestinationActivityId, roundTripped.DestinationActivityId);
             Assert.Equal(source.Outcome, roundTripped.Outcome);
+        }
+
+        [Fact]
+        public void Map_CollectionOfEntities_MapsEachElement()
+        {
+            var mapper = CreateMapper();
+            var entities = new List<WorkflowDefinitionVersionEntity>
+            {
+                new WorkflowDefinitionVersionEntity { VersionId = "v1", Activities = new List<ActivityDefinitionEntity>(), Connections = new List<ConnectionDefinitionEntity>() },
+                new WorkflowDefinitionVersionEntity { VersionId = "v2", Activities = new List<ActivityDefinitionEntity>(), Connections = new List<ConnectionDefinitionEntity>() }
+            };
+
+            var models = mapper.Map<IEnumerable<WorkflowDefinitionVersion>>(entities);
+
+            Assert.Equal(new[] { "v1", "v2" }, models.Select(x => x.Id));
         }
     }
 }
