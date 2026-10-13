@@ -2,7 +2,20 @@
 
 Mudanças relevantes dos pacotes `Enki.Elsa.*` (fork do [Elsa Workflows 1.x](https://github.com/elsa-workflows/elsa-core)).
 
-## [2.0.0] - não publicado
+## [2.0.1] - não publicado
+
+### Corrigido
+
+- **Persistência em MySQL/MariaDB (`Enki.Elsa.Persistence.EntityFrameworkCore`).** A 2.0.0 usava EF Core 10 com o
+  Pomelo 9.0.0, que só é compatível com o EF Core 9. Ao configurar o contexto com `UseMySql`, a aplicação falhava com
+  `MissingMethodException` (`AbstractionsStrings.ArgumentIsEmpty`). Como ainda não existe Pomelo para o EF Core 10, os
+  pacotes do EF voltaram para a linha 9: `Microsoft.EntityFrameworkCore.*` 9.0.20, `Npgsql.EntityFrameworkCore.PostgreSQL`
+  9.0.4 e `FlexLabs.EntityFrameworkCore.Upsert` 9.0.0. Quem usa o pacote e referencia o EF Core diretamente deve usar a
+  9.0.x. **Não use a 2.0.0 com MySQL/MariaDB.**
+- Novos testes em `Elsa.Persistence.EntityFrameworkCore.Tests` configuram o `MySqlContext` com `UseMySql` para pegar
+  essa incompatibilidade no build.
+
+## [2.0.0] - 2026-10-13
 
 ### Removido
 
