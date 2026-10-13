@@ -5,7 +5,7 @@ using Elsa.Activities.Http.Models;
 using Elsa.Activities.Http.Services;
 using Elsa.Scripting.JavaScript.Messages;
 using Elsa.Services.Models;
-using MediatR;
+using Elsa.Messaging;
 using Microsoft.AspNetCore.Http;
 
 namespace Elsa.Activities.Http.Handlers

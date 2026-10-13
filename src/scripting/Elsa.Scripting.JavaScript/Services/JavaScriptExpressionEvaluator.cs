@@ -12,7 +12,7 @@ using Elsa.Services;
 using Elsa.Services.Models;
 using Jint;
 using Jint.Native;
-using MediatR;
+using Elsa.Messaging;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -23,7 +23,7 @@ namespace Elsa.Scripting.JavaScript.Services
 {
     public class JavaScriptExpressionEvaluator : IExpressionEvaluator
     {
-        private readonly IMediator mediator;
+        private readonly INotificationPublisher notificationPublisher;
         private readonly IOptions<ScriptOptions> options;
         private readonly JsonSerializerSettings serializerSettings;
         public const string SyntaxName = "JavaScript";
@@ -33,9 +33,9 @@ namespace Elsa.Scripting.JavaScript.Services
             return new WorkflowExpression<T>(SyntaxName, expression);
         }
 
-        public JavaScriptExpressionEvaluator(IMediator mediator, IMapper mapper, IOptions<ScriptOptions> options)
+        public JavaScriptExpressionEvaluator(INotificationPublisher notificationPublisher, IMapper mapper, IOptions<ScriptOptions> options)
         {
-            this.mediator = mediator;
+            this.notificationPublisher = notificationPublisher;
             this.options = options;
 
             serializerSettings = new JsonSerializerSettings().ConfigureForNodaTime(DateTimeZoneProviders.Tzdb);
@@ -62,7 +62,7 @@ namespace Elsa.Scripting.JavaScript.Services
 
         private async Task ConfigureEngineAsync(Engine engine, WorkflowExecutionContext workflowExecutionContext, CancellationToken cancellationToken)
         {
-            await mediator.Publish(new EvaluatingJavaScriptExpression(engine, workflowExecutionContext), cancellationToken);
+            await notificationPublisher.Publish(new EvaluatingJavaScriptExpression(engine, workflowExecutionContext), cancellationToken);
         }
 
         private object ConvertValue(JsValue value, Type targetType)

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Elsa.Activities.Console.Extensions;
 using Elsa.Services;
-using MediatR;
+using Elsa.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Sample13
@@ -19,7 +19,7 @@ namespace Sample13
                 .AddElsa()
                 .AddConsoleActivities()
                 .AddSingleton(Console.In)
-                .AddMediatR(typeof(Program))
+                .AddNotificationHandlers(typeof(Program))
                 .BuildServiceProvider();
 
             // Create a workflow.

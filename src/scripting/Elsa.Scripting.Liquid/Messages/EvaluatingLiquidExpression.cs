@@ -1,6 +1,6 @@
 ﻿using Elsa.Services.Models;
 using Fluid;
-using MediatR;
+using Elsa.Messaging;
 
 namespace Elsa.Scripting.Liquid.Messages
 {

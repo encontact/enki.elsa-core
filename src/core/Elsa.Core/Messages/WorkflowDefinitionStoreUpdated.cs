@@ -1,4 +1,4 @@
-﻿using MediatR;
+﻿using Elsa.Messaging;
 
 namespace Elsa.Messages
 {

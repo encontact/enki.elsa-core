@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using Elsa.Scripting.JavaScript.Messages;
-using MediatR;
+using Elsa.Messaging;
 using NodaTime;
 
 namespace Elsa.Scripting.JavaScript.Handlers

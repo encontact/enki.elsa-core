@@ -6,6 +6,15 @@
 
 **WARN:** Fork of original <https://github.com/elsa-workflows/elsa-core>
 
+### Diferenças deste fork
+
+- **Sem MediatR (a partir da 2.0.0):** as notificações internas (`WorkflowDefinitionStoreUpdated`,
+  `EvaluatingJavaScriptExpression`, `EvaluatingLiquidExpression`) usam os contratos próprios do namespace
+  `Elsa.Messaging` (`INotification`, `INotificationHandler<T>`, `INotificationPublisher`). Handlers customizados são
+  registrados com `services.AddNotificationHandlers(typeof(Program))`. Consulte o guia de migração no
+  [CHANGELOG](CHANGELOG.md).
+- **Sem AutoMapper:** o mapeamento usa a implementação própria `ManualMapper` com `MappingProfile`.
+
 ## Elsa Workflows
 
 [![Nuget](https://img.shields.io/nuget/v/Elsa)](https://www.nuget.org/packages/Elsa/)

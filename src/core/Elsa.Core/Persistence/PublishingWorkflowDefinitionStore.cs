@@ -3,19 +3,19 @@ using System.Threading;
 using System.Threading.Tasks;
 using Elsa.Messages;
 using Elsa.Models;
-using MediatR;
+using Elsa.Messaging;
 
 namespace Elsa.Persistence
 {
     public class PublishingWorkflowDefinitionStore : IWorkflowDefinitionStore
     {
         private readonly IWorkflowDefinitionStore decoratedStore;
-        private readonly IMediator mediator;
+        private readonly INotificationPublisher notificationPublisher;
 
-        public PublishingWorkflowDefinitionStore(IWorkflowDefinitionStore decoratedStore, IMediator mediator)
+        public PublishingWorkflowDefinitionStore(IWorkflowDefinitionStore decoratedStore, INotificationPublisher notificationPublisher)
         {
             this.decoratedStore = decoratedStore;
-            this.mediator = mediator;
+            this.notificationPublisher = notificationPublisher;
         }
         
         public async Task<WorkflowDefinitionVersion> SaveAsync(WorkflowDefinitionVersion definition, CancellationToken cancellationToken = default)
@@ -58,7 +58,7 @@ namespace Elsa.Persistence
 
         private Task PublishUpdateEventAsync(CancellationToken cancellationToken)
         {
-            return mediator.Publish(new WorkflowDefinitionStoreUpdated(), cancellationToken);
+            return notificationPublisher.Publish(new WorkflowDefinitionStoreUpdated(), cancellationToken);
         }
 
         public Task<WorkflowDefinitionVersion> GetByIdReadOnlyAsync(string id, VersionOptions version, CancellationToken cancellationToken = default)
