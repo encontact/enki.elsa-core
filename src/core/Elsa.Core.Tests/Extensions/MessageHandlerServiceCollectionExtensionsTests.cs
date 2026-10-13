@@ -44,6 +44,31 @@ namespace Elsa.Core.Tests.Extensions
             }
         }
 
+        public class ScopedNotification : INotification
+        {
+        }
+
+        public class RequestScopedDependency
+        {
+            public bool Handled { get; set; }
+        }
+
+        public class ScopedNotificationHandler : INotificationHandler<ScopedNotification>
+        {
+            private readonly RequestScopedDependency dependency;
+
+            public ScopedNotificationHandler(RequestScopedDependency dependency)
+            {
+                this.dependency = dependency;
+            }
+
+            public Task Handle(ScopedNotification notification, CancellationToken cancellationToken)
+            {
+                dependency.Handled = true;
+                return Task.CompletedTask;
+            }
+        }
+
         public abstract class AbstractHandler : INotificationHandler<ScannedNotification>
         {
             public abstract Task Handle(ScannedNotification notification, CancellationToken cancellationToken);
@@ -106,15 +131,28 @@ namespace Elsa.Core.Tests.Extensions
         }
 
         [Fact]
-        public void AddNotificationHandlers_RegistersPublisherAsSingleton()
+        public void AddNotificationHandlers_RegistersPublisherAsTransient()
         {
             var services = new ServiceCollection();
 
             services.AddNotificationHandlers(typeof(MessageHandlerServiceCollectionExtensionsTests));
 
             var descriptor = Assert.Single(services, x => x.ServiceType == typeof(INotificationPublisher));
-            Assert.Equal(ServiceLifetime.Singleton, descriptor.Lifetime);
+            Assert.Equal(ServiceLifetime.Transient, descriptor.Lifetime);
             Assert.Equal(typeof(NotificationPublisher), descriptor.ImplementationType);
+        }
+
+        [Fact]
+        public async Task Publish_FromScope_ResolvesHandlerDependenciesFromThatScope()
+        {
+            var services = new ServiceCollection().AddScoped<RequestScopedDependency>();
+            services.AddNotificationHandler<ScopedNotification, ScopedNotificationHandler>();
+            using var provider = services.BuildServiceProvider(new ServiceProviderOptions { ValidateScopes = true });
+            using var scope = provider.CreateScope();
+
+            await scope.ServiceProvider.GetRequiredService<INotificationPublisher>().Publish(new ScopedNotification());
+
+            Assert.True(scope.ServiceProvider.GetRequiredService<RequestScopedDependency>().Handled);
         }
 
         [Fact]

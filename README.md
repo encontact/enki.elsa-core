@@ -8,7 +8,7 @@
 
 ### Diferenças deste fork
 
-- **Sem MediatR (a partir da 2.0.0):** as notificações internas (`WorkflowDefinitionStoreUpdated`,
+- **Sem MediatR (a partir da 1.7.0):** as notificações internas (`WorkflowDefinitionStoreUpdated`,
   `EvaluatingJavaScriptExpression`, `EvaluatingLiquidExpression`) usam os contratos próprios do namespace
   `Elsa.Messaging` (`INotification`, `INotificationHandler<T>`, `INotificationPublisher`). Handlers customizados são
   registrados com `services.AddNotificationHandlers(typeof(Program))`. Consulte o guia de migração no

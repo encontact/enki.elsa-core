@@ -2,7 +2,7 @@
 
 Mudanças relevantes dos pacotes `Enki.Elsa.*` (fork do [Elsa Workflows 1.x](https://github.com/elsa-workflows/elsa-core)).
 
-## [2.0.0] - não publicado
+## [1.7.0] - não publicado
 
 ### Removido
 
@@ -51,8 +51,10 @@ O publisher reproduz a semântica observada no MediatR 14.2.0, que era a versão
 - se a mesma classe de handler foi registrada mais de uma vez (por varredura e explicitamente, por exemplo), ela é
   executada **uma única vez** por publicação;
 - publicar `null` lança `ArgumentNullException`, e publicar sem nenhum handler registrado não faz nada;
-- o publisher é **Singleton** e resolve os handlers a partir do container raiz, que é o mesmo comportamento do
-  `IMediator`;
+- o publisher é **Transient** e resolve os handlers no escopo de quem o recebe. Handlers com dependências Scoped (um
+  `DbContext`, por exemplo) recebem a instância do escopo da requisição. Com os stores em memória, que são Singleton, o
+  decorator que publica `WorkflowDefinitionStoreUpdated` também é Singleton, então os handlers dessa notificação são
+  resolvidos a partir do container raiz;
 - os handlers registrados por `AddNotificationHandlers` / `AddNotificationHandler` são **Transient**.
 
 Diferenças em relação ao MediatR:

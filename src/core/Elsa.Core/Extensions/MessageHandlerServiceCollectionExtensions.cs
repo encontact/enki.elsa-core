@@ -9,9 +9,13 @@ namespace Elsa.Extensions
 {
     public static class MessageHandlerServiceCollectionExtensions
     {
+        /// <summary>
+        /// Registers the default <see cref="INotificationPublisher"/> unless one is already registered. It is transient so that,
+        /// when resolved from a scope, handlers and their scoped dependencies are resolved from that same scope.
+        /// </summary>
         public static IServiceCollection AddNotificationPublisher(this IServiceCollection services)
         {
-            services.TryAddSingleton<INotificationPublisher, NotificationPublisher>();
+            services.TryAddTransient<INotificationPublisher, NotificationPublisher>();
             return services;
         }
 
