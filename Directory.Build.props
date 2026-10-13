@@ -7,6 +7,6 @@
         <RepositoryUrl>https://github.com/elsa-workflows/elsa-core</RepositoryUrl>
         <RepositoryType>GitHub</RepositoryType>
         <PackageIcon>icon.png</PackageIcon>
-        <Version>1.6.3</Version>
+        <Version>1.6.4</Version>
     </PropertyGroup>
 </Project>
