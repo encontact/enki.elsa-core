@@ -27,8 +27,8 @@ namespace Elsa.Activities.Http.Liquid
             if (workflowContextValue.IsNil())
                 throw new ArgumentException("WorkflowExecutionContext missing while invoking 'signal_url'");
 
-            var workflowContext = (WorkflowExecutionContext)workflowContextValue.ToObjectValue();
-            var signalName = input.ToStringValue();
+            var workflowContext = (WorkflowExecutionContext)workflowContextValue.ToObjectValue(context);
+            var signalName = input.ToStringValue(context);
             var url = GenerateUrl(signalName, workflowContext);
             return new ValueTask<FluidValue>(new StringValue(url));
         }

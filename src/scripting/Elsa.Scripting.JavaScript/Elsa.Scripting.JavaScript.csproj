@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <LangVersion>latest</LangVersion>
         <Authors>Elsa Contributors</Authors>
         <Description>
@@ -25,7 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Jint" Version="3.0.0-beta-1914" />
+        <PackageReference Include="Jint" Version="4.17.0" />
     </ItemGroup>
 
     <ItemGroup>

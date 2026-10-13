@@ -1,7 +1,5 @@
 using System;
 using MassTransit;
-using MassTransit.Azure.ServiceBus.Core;
-using MassTransit.ExtensionsDependencyInjectionIntegration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Elsa.Activities.MassTransit.Options;
@@ -12,11 +10,11 @@ namespace Elsa.Activities.MassTransit
 {
     public sealed class DefaultAzureServiceBusMassTransitBuilder : MassTransitBuilderBase<AzureServiceBusOptions>
     {
-        protected override IBusControl CreateBus(IServiceProvider serviceProvider)
+        protected override void ConfigureTransport(IBusRegistrationConfigurator configurator)
         {
-            return Bus.Factory.CreateUsingAzureServiceBus(bus =>
+            configurator.UsingAzureServiceBus((context, bus) =>
             {
-                var options = serviceProvider.GetRequiredService<IOptions<AzureServiceBusOptions>>().Value;
+                var options = context.GetRequiredService<IOptions<AzureServiceBusOptions>>().Value;
 
                 bus.Host(options.ConnectionString);
 
@@ -28,14 +26,14 @@ namespace Elsa.Activities.MassTransit
                     bus.ReceiveEndpoint(queueName, endpoint =>
                     {
                         endpoint.PrefetchCount = 16;
-                        endpoint.ConfigureConsumer(serviceProvider, consumerType);
+                        endpoint.ConfigureConsumer(context, consumerType);
                         messageType.MapEndpointConvention(endpoint.InputAddress);
                     });
                 }
             });
         }
 
-        protected override void ConfigureMassTransit(IServiceCollectionConfigurator configurator)
+        protected override void ConfigureMassTransit(IBusRegistrationConfigurator configurator)
         {
             foreach (var messageType in MessageTypes)
             {

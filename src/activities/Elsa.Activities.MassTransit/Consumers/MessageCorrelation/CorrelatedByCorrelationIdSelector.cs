@@ -1,7 +1,5 @@
 using System;
 using MassTransit;
-using MassTransit.Internals.Extensions;
-using MassTransit.Internals.Reflection;
 
 namespace Elsa.Activities.MassTransit.Consumers.MessageCorrelation
 {
@@ -11,12 +9,10 @@ namespace Elsa.Activities.MassTransit.Consumers.MessageCorrelation
     {
         public bool TryGetCorrelationId(T message, out Guid? correlationId)
         {
-            var correlatedByInterface = typeof(T).GetInterface<CorrelatedBy<Guid>>();
-            if (correlatedByInterface != null)
+            if (typeof(CorrelatedBy<Guid>).IsAssignableFrom(typeof(T)))
             {
-                var property = ReadPropertyCache<CorrelatedBy<Guid>>.GetProperty<Guid>(nameof(CorrelatedBy<Guid>.CorrelationId));
                 var correlatedBy = (CorrelatedBy<Guid>)message;
-                correlationId = property.Get(correlatedBy);
+                correlationId = correlatedBy.CorrelationId;
                 return true;
             }
 

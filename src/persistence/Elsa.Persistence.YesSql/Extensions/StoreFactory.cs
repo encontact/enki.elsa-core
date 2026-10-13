@@ -15,7 +15,7 @@ namespace Elsa.Persistence.YesSql.Extensions
             configuration.ContentSerializer = new YesSqlJsonSerializer();
 
             configure(configuration);
-            var store = global::YesSql.StoreFactory.CreateAsync(configuration).GetAwaiter().GetResult();
+            var store = global::YesSql.StoreFactory.Create(configuration);
             var indexes = services.GetServices<IIndexProvider>();
 
             store.RegisterIndexes(indexes);

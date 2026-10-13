@@ -1,5 +1,4 @@
 using System;
-using MassTransit.Internals.Reflection;
 
 namespace Elsa.Activities.MassTransit.Consumers.MessageCorrelation
 {
@@ -19,15 +18,13 @@ namespace Elsa.Activities.MassTransit.Consumers.MessageCorrelation
             var propertyInfo = typeof(T).GetProperty(_propertyName);
             if (propertyInfo != null && propertyInfo.PropertyType == typeof(Guid))
             {
-                var property = ReadPropertyCache<T>.GetProperty<Guid>(propertyInfo);
-                correlationId = property.Get(message);
+                correlationId = (Guid)propertyInfo.GetValue(message);
                 return true;
             }
 
             if (propertyInfo != null && propertyInfo.PropertyType == typeof(Guid?))
             {
-                var property = ReadPropertyCache<T>.GetProperty<Guid?>(propertyInfo);
-                correlationId = property.Get(message);
+                correlationId = (Guid?)propertyInfo.GetValue(message);
                 return true;
             }
 

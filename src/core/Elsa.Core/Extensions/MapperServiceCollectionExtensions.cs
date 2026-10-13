@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Elsa.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -23,7 +23,7 @@ namespace Elsa.Extensions
         private static IMapper CreateMapper(IServiceProvider services)
         {
             var profiles = services.GetServices<MappingProfile>();
-            return new AutoMapperMapper(profiles);
+            return new ManualMapper(profiles);
         }
     }
 }

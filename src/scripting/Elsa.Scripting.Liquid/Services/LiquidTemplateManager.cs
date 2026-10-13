@@ -12,6 +12,8 @@ namespace Elsa.Scripting.Liquid.Services
 {
     public class LiquidTemplateManager : ILiquidTemplateManager
     {
+        private static readonly FluidParser Parser = new();
+
         private readonly IMemoryCache memoryCache;
         private readonly IServiceProvider serviceProvider;
         private readonly LiquidOptions options;
@@ -34,7 +36,7 @@ namespace Elsa.Scripting.Liquid.Services
             return await result.RenderAsync(context, encoder);
         }
 
-        private FluidTemplate GetCachedTemplate(string source)
+        private IFluidTemplate GetCachedTemplate(string source)
         {
             IEnumerable<string> errors;
 
@@ -52,6 +54,12 @@ namespace Elsa.Scripting.Liquid.Services
         }
 
         public bool Validate(string template, out IEnumerable<string> errors) => TryParse(template, out _, out errors);
-        private bool TryParse(string template, out FluidTemplate result, out IEnumerable<string> errors) => FluidTemplate.TryParse(template, true, out result, out errors);
+
+        private bool TryParse(string template, out IFluidTemplate result, out IEnumerable<string> errors)
+        {
+            var success = Parser.TryParse(template, out result, out var error);
+            errors = success ? Array.Empty<string>() : new[] { error };
+            return success;
+        }
     }
 }

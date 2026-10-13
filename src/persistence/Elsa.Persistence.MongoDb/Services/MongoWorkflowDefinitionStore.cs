@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Elsa.Extensions;
@@ -46,7 +47,7 @@ namespace Elsa.Persistence.MongoDb.Services
             VersionOptions version,
             CancellationToken cancellationToken = default)
         {
-            var query = (IMongoQueryable<WorkflowDefinitionVersion>)workflowDefinitionCollection.AsQueryable()
+            var query = workflowDefinitionCollection.AsQueryable()
                 .Where(x => x.DefinitionId == id)
                 .WithVersion(version);
 

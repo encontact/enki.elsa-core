@@ -1,6 +1,6 @@
 # To learn makefiles: https://makefiletutorial.com/
 # On windows, use NMake: https://docs.microsoft.com/pt-br/cpp/build/reference/nmake-reference?view=msvc-160
-dotnetFramework = net8.0
+dotnetFramework = net10.0
 solution = ./Elsa.sln
 artifactDir = ./artifacts
 nupkgFile = $(shell find ./artifacts -type f -name 'Enki*.nupkg')
@@ -21,8 +21,8 @@ restore:
 build:
 	dotnet build -c Release ${solution}
 
-# run-test:
-# 	dotnet test ${solution}
+test:
+	dotnet test ${solution}
 
 # publish:
 # 	dotnet publish ${apiProject} --runtime any -c Release -f ${dotnetFramework} --no-self-contained -o ${distPath}
@@ -41,7 +41,7 @@ update-dependencies:
 
 # Mais em: https://devblogs.microsoft.com/nuget/how-to-scan-nuget-packages-for-security-vulnerabilities/
 check-vulnerabilities:
-	dotnet list ${solution} package --vulnerable
+	dotnet list ${solution} package --vulnerable --include-transitive
 
 # # Detalhes de versionamento em:
 # # https://github.com/dotnet/Nerdbank.GitVersioning/blob/master/doc/nbgv-cli.md

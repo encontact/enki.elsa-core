@@ -12,7 +12,7 @@ namespace Elsa.Scripting.Liquid.Extensions
         {
             foreach (var registration in options.FilterRegistrations)
             {
-                templateContext.Filters.AddAsyncFilter(registration.Key, (input, arguments, ctx) =>
+                templateContext.Options.Filters.AddFilter(registration.Key, (input, arguments, ctx) =>
                 {
                     var filter = (ILiquidFilter) services.GetRequiredService(registration.Value);
                     return filter.ProcessAsync(input, arguments, ctx);

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <LangVersion>8.0</LangVersion>
         <Authors>Elsa Contributors</Authors>
         <Description>
@@ -25,7 +25,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.13.1" />
+        <PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.22.0" />
     </ItemGroup>
 
     <ItemGroup>

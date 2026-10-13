@@ -1,14 +1,12 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Elsa.Activities.MassTransit.Options;
 using Elsa.Attributes;
 using Elsa.Expressions;
 using Elsa.Results;
 using Elsa.Services;
 using Elsa.Services.Models;
 using MassTransit;
-using Microsoft.Extensions.Options;
 
 namespace Elsa.Activities.MassTransit.Activities
 {
@@ -20,13 +18,13 @@ namespace Elsa.Activities.MassTransit.Activities
     public class ScheduleSendMassTransitMessage : MassTransitBusActivity
     {
         private readonly IWorkflowExpressionEvaluator evaluator;
-        private readonly MessageScheduleOptions options;
+        private readonly IMessageScheduler messageScheduler;
 
-        public ScheduleSendMassTransitMessage(IWorkflowExpressionEvaluator evaluator, IBus bus, ConsumeContext consumeContext, IOptions<MessageScheduleOptions> options)
+        public ScheduleSendMassTransitMessage(IWorkflowExpressionEvaluator evaluator, IBus bus, ConsumeContext consumeContext, IMessageScheduler messageScheduler)
         : base(bus, consumeContext)
         {
             this.evaluator = evaluator;
-            this.options = options.Value;
+            this.messageScheduler = messageScheduler;
         }
 
         [ActivityProperty(Hint = "The assembly-qualified type name of the message to send.")]
@@ -47,6 +45,8 @@ namespace Elsa.Activities.MassTransit.Activities
             set => SetState(value);
         }
 
+        // CancelScheduledMassTransitMessage.EndpointAddress must be set to this exact value to cancel this
+        // message later - see the note on that property for why a mismatch is a silent-failure risk.
         [ActivityProperty(Hint = "The address of a specific endpoint to deliver the message to.")]
         public Uri EndpointAddress
         {
@@ -67,7 +67,7 @@ namespace Elsa.Activities.MassTransit.Activities
 
         protected override bool OnCanExecute(WorkflowExecutionContext context)
         {
-            return MessageType != null && options.SchedulerAddress != null;
+            return MessageType != null;
         }
 
         protected override async Task<ActivityExecutionResult> OnExecuteAsync(WorkflowExecutionContext context,
@@ -76,9 +76,7 @@ namespace Elsa.Activities.MassTransit.Activities
             var message = await evaluator.EvaluateAsync(Message, MessageType, context, cancellationToken);
             var scheduledTime = (DateTime)await evaluator.EvaluateAsync(ScheduledTime, typeof(DateTime), context, cancellationToken);
 
-            var endpoint = await SendEndpointProvider.GetSendEndpoint(options.SchedulerAddress);
-
-            var scheduledMessage = await endpoint.ScheduleSend(EndpointAddress, scheduledTime, message, cancellationToken);
+            var scheduledMessage = await messageScheduler.ScheduleSend(EndpointAddress, scheduledTime, message, cancellationToken);
 
             context.SetLastResult(Output.SetVariable("TokenId", scheduledMessage.TokenId));
 

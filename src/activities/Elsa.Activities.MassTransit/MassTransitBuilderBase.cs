@@ -1,7 +1,5 @@
 using System;
 using MassTransit;
-using MassTransit.AspNetCoreIntegration;
-using MassTransit.ExtensionsDependencyInjectionIntegration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -16,11 +14,24 @@ namespace Elsa.Activities.MassTransit
             var optionsBuilder = services.AddOptions<TOptions>();
             Options?.Invoke(optionsBuilder);
 
-            return services.AddMassTransit(CreateBus, ConfigureMassTransit);
+            services.AddMassTransit(configurator =>
+            {
+                ConfigureMassTransit(configurator);
+                ConfigureTransport(configurator);
+            });
+
+            return services;
         }
 
-        protected abstract void ConfigureMassTransit(IServiceCollectionConfigurator configurator);
-        protected abstract IBusControl CreateBus(IServiceProvider serviceProvider);
+        protected abstract void ConfigureMassTransit(IBusRegistrationConfigurator configurator);
+
+        // Neither this base class nor the Default*MassTransitBuilder implementations call
+        // cfg.UseMessageScheduler(address) inside this method. Without it, IMessageScheduler (used by
+        // ScheduleSendMassTransitMessage/CancelScheduledMassTransitMessage) has nothing configured to route
+        // scheduled messages to. A builder that wants scheduling must call UseMessageScheduler itself, inside
+        // its UsingRabbitMq/UsingAzureServiceBus callback here - this was also true of the pre-MassTransit-9
+        // code (only the old sample builders did it, never the Default* builders).
+        protected abstract void ConfigureTransport(IBusRegistrationConfigurator configurator);
 
         public Action<OptionsBuilder<TOptions>> Options { get; set; }
     }

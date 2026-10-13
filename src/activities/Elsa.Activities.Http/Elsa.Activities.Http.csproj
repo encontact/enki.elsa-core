@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
+        <TargetFramework>net10.0</TargetFramework>
         <LangVersion>latest</LangVersion>
         <Authors>Elsa Contributors</Authors>
         <Description>
@@ -35,11 +35,11 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="3.1.9" />
-        <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
-        <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-        <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.9" />
+        <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="10.0.12" />
+        <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.13" />
+        <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.13" />
+        <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.13" />
+        <PackageReference Include="Microsoft.Extensions.Http" Version="10.0.12" />
     </ItemGroup>
 
 </Project>

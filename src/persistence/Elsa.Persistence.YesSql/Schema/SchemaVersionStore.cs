@@ -19,8 +19,8 @@ namespace Elsa.Persistence.YesSql.Schema
             if (schemaVersion == null)
             {
                 schemaVersion = new SchemaVersionDocument {Version = 0};
-                session.Save(schemaVersion);
-                await session.CommitAsync();
+                await session.SaveAsync(schemaVersion);
+                await session.SaveChangesAsync();
             }
 
             return schemaVersion.Version;
@@ -30,8 +30,8 @@ namespace Elsa.Persistence.YesSql.Schema
         {
             var schemaVersion = await session.Query<SchemaVersionDocument>().FirstOrDefaultAsync();
             schemaVersion.Version = version;
-            session.Save(schemaVersion);
-            await session.CommitAsync();
+            await session.SaveAsync(schemaVersion);
+            await session.SaveChangesAsync();
         }
     }
 }

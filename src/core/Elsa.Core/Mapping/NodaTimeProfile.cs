@@ -1,51 +1,32 @@
 using System;
-using AutoMapper;
 using Elsa.Services;
 using NodaTime;
 
 namespace Elsa.Mapping
 {
-    public class NodaTimeProfile : MappingProfile,
-        ITypeConverter<Instant, DateTime>,
-        ITypeConverter<Instant?, DateTime?>,
-        ITypeConverter<DateTime, Instant>,
-        ITypeConverter<DateTime?, Instant?>
+    public class NodaTimeProfile : MappingProfile
     {
         public NodaTimeProfile()
         {
-            CreateMap<Instant, DateTime>().ConvertUsing(this);
-            CreateMap<Instant?, DateTime?>().ConvertUsing(this);
-            CreateMap<DateTime, Instant>().ConvertUsing(this);
-            CreateMap<DateTime?, Instant?>().ConvertUsing(this);
+            CreateMap<Instant, DateTime>(ToDateTime);
+            CreateMap<Instant?, DateTime?>(ToNullableDateTime);
+            CreateMap<DateTime, Instant>(ToInstant);
+            CreateMap<DateTime?, Instant?>(ToNullableInstant);
         }
 
-        public DateTime Convert(Instant source, DateTime destination, ResolutionContext context)
-        {
-            return source.ToDateTimeUtc();
-        }
+        public static DateTime ToDateTime(Instant source) => source.ToDateTimeUtc();
 
-        public DateTime? Convert(Instant? source, DateTime? destination, ResolutionContext context)
-        {
-            return source?.ToDateTimeUtc();
-        }
+        public static DateTime? ToNullableDateTime(Instant? source) => source?.ToDateTimeUtc();
 
-        public Instant Convert(DateTime source, Instant destination, ResolutionContext context)
-        {
-            return Convert(source);
-        }
-
-        public Instant? Convert(DateTime? source, Instant? destination, ResolutionContext context)
-        {
-            return source != null ? Convert(source.Value) : default(Instant?);
-        }
-        
-        public Instant Convert(DateTime source)
+        public static Instant ToInstant(DateTime source)
         {
             var utcDateTime = source.Kind == DateTimeKind.Unspecified
                 ? DateTime.SpecifyKind(source, DateTimeKind.Utc)
                 : source.ToUniversalTime();
-            
+
             return Instant.FromDateTimeUtc(utcDateTime);
         }
+
+        public static Instant? ToNullableInstant(DateTime? source) => source != null ? ToInstant(source.Value) : default(Instant?);
     }
 }
