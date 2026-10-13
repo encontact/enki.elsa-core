@@ -2,7 +2,24 @@
 
 Mudanças relevantes dos pacotes `Enki.Elsa.*` (fork do [Elsa Workflows 1.x](https://github.com/elsa-workflows/elsa-core)).
 
-## [2.0.1] - não publicado
+## [2.1.0] - não publicado
+
+### Alterado
+
+- **Provider MySQL/MariaDB trocado para `Microting.EntityFrameworkCore.MySql` e EF Core de volta para a 10
+  (`Enki.Elsa.Persistence.EntityFrameworkCore`).** O Pomelo parou no EF Core 9 (última versão em agosto de 2025, sem
+  suporte ao EF Core 10), e o EF Core 9 perde suporte da Microsoft em 10/11/2026. O `Microting.EntityFrameworkCore.MySql`
+  é um fork do Pomelo (MIT), mantido, com suporte ao EF Core 10 e testado com MariaDB. A API usada (`UseMySql`,
+  `MariaDbServerVersion`, `MySqlServerVersion`) e as migrations são as mesmas, então não há mudança de código para quem
+  consome o pacote.
+  - `Pomelo.EntityFrameworkCore.MySql` 9.0.0 → `Microting.EntityFrameworkCore.MySql` 10.0.12
+  - `Microsoft.EntityFrameworkCore.*` 9.0.20 → 10.0.12
+  - `Npgsql.EntityFrameworkCore.PostgreSQL` 9.0.4 → 10.0.3
+  - `FlexLabs.EntityFrameworkCore.Upsert` 9.0.0 → 10.1.0
+- Quem referencia o EF Core diretamente deve usar a 10.x. Bancos criados pelas versões anteriores continuam
+  funcionando sem migration nova.
+
+## [2.0.1] - 2026-10-13
 
 ### Corrigido
 

@@ -7,9 +7,9 @@ using Xunit;
 namespace Elsa.Persistence.EntityFrameworkCore.Tests.DbContexts
 {
     /// <summary>
-    /// Guards the MySQL/MariaDB provider (Pomelo) against EF Core versions it is not binary compatible with:
-    /// Pomelo 9.0.0 on EF Core 10 throws MissingMethodException as soon as UseMySql is called. None of these
-    /// tests open a database connection.
+    /// Guards the MySQL/MariaDB provider (Microting.EntityFrameworkCore.MySql) against EF Core versions it is not
+    /// binary compatible with: Pomelo 9.0.0 on EF Core 10 threw MissingMethodException as soon as UseMySql was called.
+    /// None of these tests open a database connection.
     /// </summary>
     public class MySqlContextTests
     {
