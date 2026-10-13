@@ -1,6 +1,6 @@
 ﻿using Elsa.Services.Models;
 using Jint;
-using MediatR;
+using Elsa.Messaging;
 
 namespace Elsa.Scripting.JavaScript.Messages
 {

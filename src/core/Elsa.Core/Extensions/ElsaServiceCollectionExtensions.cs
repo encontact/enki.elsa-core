@@ -15,7 +15,6 @@ using Elsa.Services.Models;
 using Elsa.WorkflowBuilders;
 using Elsa.WorkflowEventHandlers;
 using Elsa.WorkflowProviders;
-using MediatR;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using NodaTime;
 
@@ -30,7 +29,7 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             var configuration = new ElsaBuilder(services);
             configuration.AddWorkflowsCore();
-            configuration.AddMediatR();
+            configuration.AddNotifications();
             configure?.Invoke(configuration);
             EnsurePersistence(configuration);
             EnsureCaching(configuration);
@@ -52,13 +51,9 @@ namespace Microsoft.Extensions.DependencyInjection
                 .AddTransient<IActivity>(sp => sp.GetRequiredService<T>());
         }
 
-        private static IServiceCollection AddMediatR(this ElsaBuilder configuration)
+        private static IServiceCollection AddNotifications(this ElsaBuilder configuration)
         {
-            return configuration.Services.AddMediatR(cfg =>
-            {
-                cfg.RegisterServicesFromAssemblyContaining(typeof(ElsaServiceCollectionExtensions));
-                cfg.Lifetime = ServiceLifetime.Singleton;
-            });
+            return configuration.Services.AddNotificationHandlers(typeof(ElsaServiceCollectionExtensions));
         }
 
         private static ElsaBuilder AddWorkflowsCore(this ElsaBuilder configuration)

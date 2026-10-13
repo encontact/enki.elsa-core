@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Elsa.Scripting.JavaScript.Messages;
-using MediatR;
+using Elsa.Messaging;
 
 namespace Elsa.Scripting.JavaScript.Handlers
 {

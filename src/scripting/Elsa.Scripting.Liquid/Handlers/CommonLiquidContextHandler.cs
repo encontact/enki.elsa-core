@@ -9,7 +9,7 @@ using Elsa.Scripting.Liquid.Messages;
 using Elsa.Services.Models;
 using Fluid;
 using Fluid.Values;
-using MediatR;
+using Elsa.Messaging;
 using Newtonsoft.Json.Linq;
 
 namespace Elsa.Scripting.Liquid.Handlers

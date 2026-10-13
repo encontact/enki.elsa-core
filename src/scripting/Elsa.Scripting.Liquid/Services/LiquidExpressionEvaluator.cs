@@ -7,20 +7,20 @@ using Elsa.Scripting.Liquid.Messages;
 using Elsa.Services;
 using Elsa.Services.Models;
 using Fluid;
-using MediatR;
+using Elsa.Messaging;
 
 namespace Elsa.Scripting.Liquid.Services
 {
     public class LiquidExpressionEvaluator : IExpressionEvaluator
     {
         private readonly ILiquidTemplateManager liquidTemplateManager;
-        private readonly IMediator mediator;
+        private readonly INotificationPublisher notificationPublisher;
         public const string SyntaxName = "Liquid";
 
-        public LiquidExpressionEvaluator(ILiquidTemplateManager liquidTemplateManager, IMediator mediator)
+        public LiquidExpressionEvaluator(ILiquidTemplateManager liquidTemplateManager, INotificationPublisher notificationPublisher)
         {
             this.liquidTemplateManager = liquidTemplateManager;
-            this.mediator = mediator;
+            this.notificationPublisher = notificationPublisher;
         }
 
         public string Syntax => SyntaxName;
@@ -36,7 +36,7 @@ namespace Elsa.Scripting.Liquid.Services
         {
             var context = new TemplateContext(workflowContext, CommonLiquidContextHandler.Options);
             context.SetValue("WorkflowExecutionContext", workflowContext);
-            await mediator.Publish(new EvaluatingLiquidExpression(context, workflowContext), cancellationToken);
+            await notificationPublisher.Publish(new EvaluatingLiquidExpression(context, workflowContext), cancellationToken);
             return context;
         }
     }

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Elsa.Caching;
 using Elsa.Services;
-using MediatR;
+using Elsa.Messaging;
 
 namespace Elsa.Messages.Handlers
 {
