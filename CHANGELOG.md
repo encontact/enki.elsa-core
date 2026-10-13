@@ -2,7 +2,7 @@
 
 Mudanças relevantes dos pacotes `Enki.Elsa.*` (fork do [Elsa Workflows 1.x](https://github.com/elsa-workflows/elsa-core)).
 
-## [1.7.0] - não publicado
+## [2.0.0] - não publicado
 
 ### Removido
 
