@@ -16,6 +16,7 @@
         <RepositoryType>GitHub</RepositoryType>
         <PackageTags>elsa, workflows</PackageTags>
         <PackageId>Enki.Elsa.Activities.Startup</PackageId>
+        <AssemblyName>Enki.Elsa.Activities.Startup</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>

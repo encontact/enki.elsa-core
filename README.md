@@ -22,7 +22,6 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/l07xwnl34qtm6c27?svg=true)](https://ci.appveyor.com/project/sfmskywalker/elsa-1)
 [![Discord](https://img.shields.io/discord/814605913783795763?label=chat&logo=discord)](https://discord.gg/hhChk5H472)
 [![Stack Overflow questions](https://img.shields.io/badge/stackoverflow-elsa_workflows-orange.svg)]( http://stackoverflow.com/questions/tagged/elsa-workflows )
-![Docker Pulls](https://img.shields.io/docker/pulls/elsaworkflows/elsa-dashboard?label=elsa%20dashboard%3Adocker%20pulls)
 
 Elsa Core is a workflows library that enables workflow execution in any .NET Core application.
 Workflows can be defined not only using code but also as JSON, YAML or XML.
@@ -40,9 +39,8 @@ Version 1.0
 - [x] Workflows as code
 - [x] Workflows as data
 - [x] Correlation
-- [x] Persistence: CosmosDB, Entity Framework Core, MongoDB, YesSQL 
+- [x] Persistence: CosmosDB, Entity Framework Core, MongoDB
 - [x] HTML5 Workflow Designer Web Component
-- [x] ASP.NET Core Workflow Dashboard
 - [x] JavaScript Expressions
 - [x] Liquid Expressions
 - [x] Primitive Activities
@@ -73,9 +71,6 @@ Version 3.0
 ## Workflow Designer
 
 Workflows can be visually designed using [Elsa Designer](https://github.com/elsa-workflows/elsa-designer-html), a reusable & extensible HTML5 web component built with [StencilJS](https://stenciljs.com/).
-To manage workflow definitions and instances, Elsa comes with a reusable Razor Class Library that provides a dashboard application in the form of an MVC area that you can include in your own ASP.NET Core application.
-
-![Web-based workflow designer](/doc/dashboard-sample-1.png)
 
 ## Programmatic Workflows
 
@@ -197,16 +192,6 @@ TODO: describe all the steps to add packages and register services.
 ### Setting up a Workflow Host .NET Application 
 
 TODO: describe all the steps to add packages and register services.
-
-### Building & Running Elsa Workflows Dashboard
-
-In order to build & run Elsa on your local machine, follow these steps:
-
-1. Clone the repository.
-2. Run NPM install on `src\dashboard\Elsa.Dashboard\Theme\argon-dashboard`
-3. Execute `gulp build` from the directory `src\dashboard\Elsa.Dashboard\Theme\argon-dashboard`
-4. Open a shell and navigate to `src\dashboard\Elsa.Dashboard.Web` and run `dotnet run`.
-5. Navigate to http://localhost:22174/elsa/home
 
 ## Code of Conduct
 

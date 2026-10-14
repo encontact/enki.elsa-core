@@ -17,6 +17,7 @@
         <PackageTags>elsa, workflows, email, smtp</PackageTags>
         <PackageIcon>icon.png</PackageIcon>
         <PackageId>Enki.Elsa.Activities.Email</PackageId>
+        <AssemblyName>Enki.Elsa.Activities.Email</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
@@ -32,6 +33,8 @@
 
     <ItemGroup>
       <PackageReference Include="MailKit" Version="4.18.1" />
+      <!-- Override transitivo: o MimeKit traz o System.Security.Cryptography.Pkcs 10.0.0 (vulnerabilidades altas) -->
+      <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
     </ItemGroup>
 
 </Project>

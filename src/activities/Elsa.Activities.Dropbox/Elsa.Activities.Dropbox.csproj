@@ -17,6 +17,7 @@
         <PackageTags>elsa, workflows, dropbox</PackageTags>
         <PackageIcon>icon.png</PackageIcon>
         <PackageId>Enki.Elsa.Activities.Dropbox</PackageId>
+        <AssemblyName>Enki.Elsa.Activities.Dropbox</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>

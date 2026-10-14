@@ -16,6 +16,7 @@
         <PackageTags>elsa, workflows</PackageTags>
         <PackageIcon>icon.png</PackageIcon>
         <PackageId>Enki.Elsa.Abstractions</PackageId>
+        <AssemblyName>Enki.Elsa.Abstractions</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
