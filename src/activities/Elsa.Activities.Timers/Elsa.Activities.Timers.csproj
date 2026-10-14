@@ -19,6 +19,7 @@
         <PackageTags>elsa, workflows, timers, background tasks</PackageTags>
         <PackageIcon>icon.png</PackageIcon>
         <PackageId>Enki.Elsa.Activities.Timers</PackageId>
+        <AssemblyName>Enki.Elsa.Activities.Timers</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>

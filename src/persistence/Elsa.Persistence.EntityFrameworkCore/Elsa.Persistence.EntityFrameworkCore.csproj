@@ -15,6 +15,7 @@
         <PackageTags>elsa, workflows, entity framework core</PackageTags>
         <PackageIcon>icon.png</PackageIcon>
         <PackageId>Enki.Elsa.Persistence.EntityFrameworkCore</PackageId>
+        <AssemblyName>Enki.Elsa.Persistence.EntityFrameworkCore</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
@@ -40,6 +41,8 @@
         </PackageReference>
         <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="10.0.3" />
         <PackageReference Include="Microting.EntityFrameworkCore.MySql" Version="10.0.12" />
+        <!-- Override transitivo: o Microsoft.Data.SqlClient (via EF Core SqlServer) traz o System.Security.Cryptography.Pkcs 9.0.11 (vulnerabilidades altas) -->
+        <PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.13" />
     </ItemGroup>
 
     <ItemGroup>

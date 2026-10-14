@@ -2,7 +2,45 @@
 
 Mudanças relevantes dos pacotes `Enki.Elsa.*` (fork do [Elsa Workflows 1.x](https://github.com/elsa-workflows/elsa-core)).
 
-## [2.1.1] - não publicado
+## [3.0.0] - não publicado
+
+### Alterado (quebra de compatibilidade)
+
+- **As DLLs passam a ter o nome do pacote.** Até a 2.1.1, cada pacote `Enki.Elsa.*` trazia uma DLL com o nome do
+  projeto original (`Elsa.dll`, `Elsa.Core.dll`, `Elsa.Abstractions.dll`, ...), o mesmo das DLLs do Elsa original.
+  Agora o nome da DLL é igual ao do pacote (`Enki.Elsa.dll`, `Enki.Elsa.Core.dll`, `Enki.Elsa.Abstractions.dll`, ...).
+  Os namespaces não mudaram, então quem consome os pacotes só precisa recompilar.
+- Dados gravados que guardem o nome de um tipo junto com o nome antigo de uma DLL do Elsa (por exemplo, uma variável
+  com valor do tipo `Elsa.Models.ConnectionDefinition, Elsa.Abstractions`) deixam de ser carregados. Valores simples
+  (números, textos) e tipos da própria aplicação não são afetados. Antes de atualizar, confirme que as colunas JSON das
+  tabelas `WorkflowInstances`, `ActivityInstances`, `WorkflowDefinitionVersions` e `ActivityDefinitions` não têm
+  nomes de tipo que terminem em `, Elsa` ou `, Elsa.<pacote>`.
+
+### Removido
+
+- `Enki.Elsa.Persistence.YesSql`. O provider não funcionava desde a atualização para o YesSql 6 (1.6.3): o YesSql 6
+  exige inicializar o store, o provider não fazia isso e a aplicação falhava ao iniciar.
+- `Enki.Elsa.Dashboard` e `Enki.Elsa.WorkflowDesigner`. Os pacotes eram publicados sem os arquivos estáticos (CSS, JS e
+  imagens), que dependiam de um build de front-end que não roda no CI, e as páginas apontavam para
+  `_content/Elsa.Dashboard`, enquanto o caminho publicado era `_content/Enki.Elsa.Dashboard`.
+- Junto com eles saíram o app `Elsa.Dashboard.Web`, os samples 10, 16 e 19, o `Dockerfile` e o `docker-compose.yaml`
+  (que só rodavam o dashboard) e o `appveyor.yml` (CI antigo do Elsa original).
+- As versões já publicadas desses pacotes continuam no NuGet, mas não recebem versões novas.
+
+### Segurança
+
+- `System.Security.Cryptography.Xml` e `System.Security.Cryptography.Pkcs` 10.0.13, que corrigem vulnerabilidades de
+  negação de serviço: CVE-2026-96958, CVE-2026-96959 e CVE-2026-96960 (Xml), CVE-2026-84008 e CVE-2026-70162 (Pkcs).
+  - `Enki.Elsa.Activities.Http` (e, por dependência, `Enki.Elsa`): `Microsoft.AspNetCore.DataProtection` 10.0.12 → 10.0.13.
+  - `Enki.Elsa.Activities.Email` e `Enki.Elsa.Persistence.EntityFrameworkCore`: referência direta ao
+    `System.Security.Cryptography.Pkcs` 10.0.13, porque o MimeKit e o Microsoft.Data.SqlClient traziam a 10.0.0 e a 9.0.11.
+- Em aplicações ASP.NET Core, o `System.Security.Cryptography.Xml` faz parte do runtime (`Microsoft.AspNetCore.App`) e
+  é sempre a cópia do runtime que é usada: a correção dele depende de rodar o runtime 10.0.13 ou superior. Já o
+  `System.Security.Cryptography.Pkcs` 10.0.13 vai junto com a aplicação e é usado mesmo com o runtime 10.0.12.
+- Quem referencia o `System.Security.Cryptography.Xml` diretamente numa versão anterior à 10.0.13 precisa subir para a
+  10.0.13; senão o restore falha com NU1605 (downgrade).
+
+## [2.1.1] - 2026-10-14
 
 ### Corrigido
 

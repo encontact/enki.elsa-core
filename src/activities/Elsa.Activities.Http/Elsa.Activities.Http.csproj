@@ -19,6 +19,7 @@
         <PackageTags>elsa, workflows, http</PackageTags>
         <PackageIcon>icon.png</PackageIcon>
         <PackageId>Enki.Elsa.Activities.Http</PackageId>
+        <AssemblyName>Enki.Elsa.Activities.Http</AssemblyName>
     </PropertyGroup>
 
     <ItemGroup>
@@ -35,7 +36,7 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="10.0.12" />
+        <PackageReference Include="Microsoft.AspNetCore.DataProtection" Version="10.0.13" />
         <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.3.13" />
         <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.3.13" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.3.13" />
