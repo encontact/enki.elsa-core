@@ -34,8 +34,11 @@ Mudanças relevantes dos pacotes `Enki.Elsa.*` (fork do [Elsa Workflows 1.x](htt
   - `Enki.Elsa.Activities.Http` (e, por dependência, `Enki.Elsa`): `Microsoft.AspNetCore.DataProtection` 10.0.12 → 10.0.13.
   - `Enki.Elsa.Activities.Email` e `Enki.Elsa.Persistence.EntityFrameworkCore`: referência direta ao
     `System.Security.Cryptography.Pkcs` 10.0.13, porque o MimeKit e o Microsoft.Data.SqlClient traziam a 10.0.0 e a 9.0.11.
-- Em aplicações ASP.NET Core, esses dois pacotes fazem parte do runtime (`Microsoft.AspNetCore.App`), e é a cópia do
-  runtime que é usada. Nelas, a correção depende de rodar o runtime 10.0.13 ou superior.
+- Em aplicações ASP.NET Core, o `System.Security.Cryptography.Xml` faz parte do runtime (`Microsoft.AspNetCore.App`) e
+  é sempre a cópia do runtime que é usada: a correção dele depende de rodar o runtime 10.0.13 ou superior. Já o
+  `System.Security.Cryptography.Pkcs` 10.0.13 vai junto com a aplicação e é usado mesmo com o runtime 10.0.12.
+- Quem referencia o `System.Security.Cryptography.Xml` diretamente numa versão anterior à 10.0.13 precisa subir para a
+  10.0.13; senão o restore falha com NU1605 (downgrade).
 
 ## [2.1.1] - 2026-10-14
 
