@@ -14,6 +14,9 @@ namespace Elsa.Persistence.EntityFrameworkCore.Services
 {
     public class EntityFrameworkCoreWorkflowDefinitionStore : IWorkflowDefinitionStore
     {
+        // Shadow foreign key that links ActivityDefinitions and ConnectionDefinitions to WorkflowDefinitionVersions.
+        private const string WorkflowDefinitionVersionForeignKey = "WorkflowDefinitionVersionId";
+
         private readonly ElsaContext dbContext;
         private readonly IMapper mapper;
 
@@ -65,12 +68,14 @@ namespace Elsa.Persistence.EntityFrameworkCore.Services
         {
             await using (var transaction = await dbContext.Database.BeginTransactionAsync(cancellationToken))
             {
+                // Filter on the foreign key itself: going through the WorkflowDefinitionVersion navigation makes EF Core 10
+                // generate "WHERE Id IN (SELECT ... FROM <same table>)", which MySQL/MariaDB reject (error 1093).
                 await dbContext.ActivityDefinitions
-                    .Where(x => x.WorkflowDefinitionVersion.VersionId == entity.VersionId)
+                    .Where(x => EF.Property<int?>(x, WorkflowDefinitionVersionForeignKey) == entity.Id)
                     .ExecuteDeleteAsync(cancellationToken);
 
                 await dbContext.ConnectionDefinitions
-                    .Where(x => x.WorkflowDefinitionVersion.VersionId == entity.VersionId)
+                    .Where(x => EF.Property<int?>(x, WorkflowDefinitionVersionForeignKey) == entity.Id)
                     .ExecuteDeleteAsync(cancellationToken);
 
                 dbContext.ChangeTracker.Clear();

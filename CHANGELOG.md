@@ -2,7 +2,21 @@
 
 Mudanças relevantes dos pacotes `Enki.Elsa.*` (fork do [Elsa Workflows 1.x](https://github.com/elsa-workflows/elsa-core)).
 
-## [2.1.0] - não publicado
+## [2.1.1] - não publicado
+
+### Corrigido
+
+- **Salvar um fluxo que já existe em MySQL/MariaDB (`Enki.Elsa.Persistence.EntityFrameworkCore`).** Ao atualizar
+  uma definição, o store apaga as atividades e conexões antigas com `ExecuteDelete`, filtrando pela navegação
+  `WorkflowDefinitionVersion.VersionId`. Com o EF Core 10 e o `Microting.EntityFrameworkCore.MySql`, isso passou a
+  gerar `DELETE ... WHERE Id IN (SELECT ... FROM <mesma tabela>)`, que o MariaDB recusa (erro 1093, "Table 'a' is
+  specified twice"). Na 1.6.3, o Pomelo gerava um `DELETE ... JOIN`, que funcionava. O filtro agora usa a própria
+  chave estrangeira (`WorkflowDefinitionVersionId`), o que gera um `DELETE` simples numa tabela só.
+- Novos testes em `Elsa.Persistence.EntityFrameworkCore.Tests` salvam e atualizam um fluxo existente contra um
+  MySQL/MariaDB real. Eles só rodam com a variável `ELSA_TEST_MYSQL_CONNECTION` definida (connection string) e são
+  pulados sem ela.
+
+## [2.1.0] - 2026-10-13
 
 ### Alterado
 
